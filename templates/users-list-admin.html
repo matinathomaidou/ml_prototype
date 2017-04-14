@@ -1,0 +1,36 @@
+{% extends 'admin-home.html' %}
+
+{% block bodytag %}
+    <body {% if onloadmessage %} onload="alert('{{onloadmessage}}');" {% endif %}>
+{% endblock %}
+
+{% block content %}
+  <h3> Below is the list of users in system</h3>
+  <br/>
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>email address</th>
+        <th>Is Admin ?</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.email }}</td>
+          <td>{{ user.admin }}</td>
+          <td>
+            <a class="btn btn-info btn-xs" href={{ url_for('users_list_admin') }}> Edit</a>
+          </td>
+          <td>
+            <a class="btn btn-danger btn-xs" href={{ url_for('users_delete_admin', id=user.email) }}> Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+

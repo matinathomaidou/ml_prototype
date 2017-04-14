@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block bodytag %}
+    <body {% if onloadmessage %} onload="alert('{{onloadmessage}}');" {% endif %}>
+{% endblock %}
+
+
+{% block content %}
+<div class="jumbotron">
+<div class="container">
+  <h1>Admin</h1>
+  <h2>User management</h2>
+  <a href={{ url_for('users_list_admin')}}> List of all users</a>
+  <br/>
+  <a href={{ url_for('admin_add') }}> Create a new user</a>
+  <br/>
+  <a href={{ url_for('admin_reset') }}> Reset a password</a>
+  <br/>
+</div>
+</div>  
+{% endblock %}
+
