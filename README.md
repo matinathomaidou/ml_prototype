@@ -11,6 +11,8 @@ The developers of this prototype acknowledge the work of Twitter, MonoDB, the ma
 and other open source tools used in this project. Our interest is not in building websites or web site applications but
 we occassionally need to have front end user input.
 
+This project can be hosted on AWS,  Azure,  Softlayer, or any cloud provider.  This is not a static web site.
+
 
 
 
