@@ -57,7 +57,7 @@ def login():
     form = LoginForm(request.form)
     if form.validate():
         stored_user = DB.get_user(form.loginemail.data)
-        if stored_user and PH.validate_password(form.loginpassword.data, stored_user['salt'], stored_user['hashed']):
+        if stored_user and PH.validate_password((form.loginpassword.data).encode(), stored_user['salt'], stored_user['hashed']):
             user = User(form.loginemail.data)
             login_user(user, remember=True)
             return redirect(url_for('dashboard'))
@@ -84,7 +84,7 @@ def register():
             form.email.errors.append("Email address already registered")
             return render_template('home.html', loginform=LoginForm, registrationform=form)
         salt = PH.get_salt()
-        hashed = PH.get_hash(form.password2.data + salt)
+        hashed = PH.get_hash(str((form.password2.data).encode()) + salt)
         is_admin = 'N'
         DB.add_user(form.email.data, salt, hashed, is_admin)
         return render_template("home.html", loginform=LoginForm(), registrationform=form, onloadmessage="Registration successful. Please log in to continue.  Thank you!.")
@@ -145,7 +145,7 @@ def register_admin():
                 form.email.errors.append("Email address already registered")
                 return render_template('admin-home.html')
             salt = PH.get_salt()
-            hashed = PH.get_hash(form.password2.data + salt)
+            hashed = PH.get_hash((form.password2.data).encode() + salt)
             isadmin = 'N'
             DB.add_user(form.email.data, salt, hashed, isadmin)
             users = DB.list_user()
