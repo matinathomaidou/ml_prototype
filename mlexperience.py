@@ -1,12 +1,12 @@
 from flask import Flask
 from flask import render_template
-from flask.ext.login import LoginManager
-from flask.ext.login import login_required
-from flask.ext.login import login_user, current_user
+from flask_login import LoginManager
+from flask_login import login_required
+from flask_login import login_user, current_user
 from flask import redirect
 from flask import url_for
 from flask import request
-from flask.ext.login import logout_user
+from flask_login import logout_user
 from forms import RegistrationForm
 from forms import LoginForm
 from forms import AdminUserCreateForm
@@ -143,18 +143,23 @@ def register_admin():
         if form.validate():
             if DB.get_user(form.email.data):
                 form.email.errors.append("Email address already registered")
-                return render_template('admin-home.html')
+                return render_template("admin_register.html", loginform=None, registrationform=form)
             salt = PH.get_salt()
             hashed = PH.get_hash((form.password2.data).encode() + salt)
             isadmin = 'N'
             DB.add_user(form.email.data, salt, hashed, isadmin)
             users = DB.list_user()
-            return render_template("users-list-admin.html", users=users)
-        return render_template("admin_register.html", loginform=None, registrationform=AdminUserCreateForm()) 
+            return render_template("users-list-admin.html", users=users, onloadmessage="User Registration successful. Please inform the user.  Thank you!.")
+        else:
+            if DB.get_user(form.email.data):
+                form.email.errors.append("Email address already registered")   
+            form.email.errors.append("Fix errors and re-submit!")    
+            return render_template("admin_register.html", loginform=None, registrationform=form) 
     
     else:
         return redirect(url_for('dashboard'))
-   
+
+  
 @app.route("/admin/requested_reg")
 @login_required
 #@User.is_admin()
@@ -181,16 +186,21 @@ def admin_reset():
 #@User.is_admin()
 def admin_pw_update():    
     if (is_admin()):  
-        form = AdminUserCreateForm(request.form)
+        form = AdminUserPW(request.form)
         if form.validate():
             if DB.get_user(form.email.data):
                 salt = PH.get_salt()
-                hashed = PH.get_hash(form.password2.data + salt)
+                hashed = PH.get_hash((form.password2.data).encode() + salt)
                 isadmin = 'N'
                 DB.pw_user_update(form.email.data, salt, hashed, isadmin)
                 users = DB.list_user()
-                return render_template("users-list-admin.html", users=users)
-            return render_template("admin_password.html", loginform=None, registrationform=AdminUserPW())          
+                return render_template("users-list-admin.html", users=users, onloadmessage="Password changed - Inform the user.  Thank you!.")
+            else:
+                form.email.errors.append("error! email not known!")
+                return render_template("admin_password.html", loginform=None, registrationform=form)    
+        else:
+                form.email.errors.append("Fix errors and re-submit!")
+                return render_template("admin_password.html", loginform=None, registrationform=form)   
     else:
         return redirect(url_for('dashboard'))
   

@@ -1,5 +1,9 @@
 import pymongo
 from bson import ObjectId
+import config
+
+
+uri = config.uri
 
 DATABASE = "mlexperience"
 
@@ -7,7 +11,7 @@ DATABASE = "mlexperience"
 class DBHelper:
 
     def __init__(self):
-        client = pymongo.MongoClient()
+        client = pymongo.MongoClient(uri)
         self.db = client[DATABASE]
 
     def get_user(self, email):

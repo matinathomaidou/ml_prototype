@@ -5,7 +5,7 @@ Created on Wed Apr 12 19:23:42 2017
 @author: david
 """
 
-from flask_wtf import Form
+from wtforms import Form
 from wtforms import PasswordField
 from wtforms import SubmitField
 from wtforms.fields.html5 import EmailField
