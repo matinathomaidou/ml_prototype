@@ -64,7 +64,10 @@ def login():
             login_user(user, remember=True)
             return redirect(url_for('dashboard'))
         form.loginemail.errors.append("Email or password invalid")
-    return render_template("home.html", loginform=form, registrationform=RegistrationForm())
+    if config.reg_open:
+       return render_template("home.html", loginform=form, registrationform=RegistrationForm())
+    else:
+       return render_template("home.html", loginform=form, registrationform=None)
   
 
 @login_manager.user_loader
