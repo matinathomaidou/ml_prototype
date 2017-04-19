@@ -43,7 +43,7 @@ apache_codes = {'200':	'OK',
 
 import datetime
 import json
-from pprint import pprint
+
 import codecs
 data = []
 with codecs.open('/home/david/Dropbox/mlexperience/log.js','rU','utf-8') as f:
@@ -57,6 +57,6 @@ for entry in log['items']:
     time = datetime.datetime.strptime(time, "%d/%b/%Y:%H:%M:%S")
     entry['time'] = str(time)
     entry['status'] = entry['status'] + '-' + apache_codes[entry['status']]
-pprint(log)
+
 with open('/home/david/mlexperience/templates/log.js', 'w') as outfile:
     json.dump(log, outfile)    
