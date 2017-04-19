@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
+#-*-coding: utf-8 -*-
 """
 Created on Wed Apr 19 15:45:47 2017
 
@@ -46,7 +47,7 @@ import json
 
 import codecs
 data = []
-with codecs.open('/home/david/Dropbox/mlexperience/log.js','rU','utf-8') as f:
+with codecs.open('/var/log/apache2/access.log','rU','utf-8') as f:
     for line in f:
        data.append(json.loads(line))
 
@@ -58,5 +59,5 @@ for entry in log['items']:
     entry['time'] = str(time)
     entry['status'] = entry['status'] + '-' + apache_codes[entry['status']]
 
-with open('/home/david/mlexperience/templates/log.js', 'w') as outfile:
+with open('/var/www/ml_prototype/static/log.js', 'w') as outfile:
     json.dump(log, outfile)    
