@@ -100,6 +100,14 @@ def register():
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+    
+@app.route("/admin/web_log")
+@login_required
+def web_log():
+    if (is_admin()):
+        return render_template('logs.html')
+    else:
+        return redirect(url_for('dashboard'))  
 
 
 @app.route("/account")
