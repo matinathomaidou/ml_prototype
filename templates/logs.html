@@ -35,7 +35,7 @@
         <div id="timeline" ex:role="view"
              ex:viewClass="Timeline"
              ex:label="When"
-             ex:start=".timestamp"
+             ex:start=".time"
              ex:colorKey=".status"
              ex:topBandUnit="day"
              ex:topBandPixelsPerUnit="200"
@@ -45,10 +45,10 @@
        <!-- Boxes to allow users narrow down their view of feed data -->
        <td id="facets">
          <div ex:role="facet" ex:facetClass="TextSearch"></div>
-         <div ex:role="facet" ex:expression=".path" ex:facetLabel="Path"></div>
-         <div ex:role="facet" ex:expression=".referrer" ex:facetLabel="Referrer"></div>
-         <div ex:role="facet" ex:expression=".origin" ex:facetLabel="Origin"></div>
-         <div ex:role="facet" ex:expression=".client" ex:facetLabel="Client"></div>
+         <div ex:role="facet" ex:expression=".request" ex:facetLabel="Path"></div>
+         <div ex:role="facet" ex:expression=".referer" ex:facetLabel="Referrer"></div>
+         <div ex:role="facet" ex:expression=".remoteIP" ex:facetLabel="Origin"></div>
+         <div ex:role="facet" ex:expression=".userAgent" ex:facetLabel="Client"></div>
          <div ex:role="facet" ex:expression=".status" ex:facetLabel="Status"></div>
        </td>
      </tr>
