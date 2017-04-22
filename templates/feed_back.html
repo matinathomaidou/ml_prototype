@@ -6,7 +6,7 @@
 
 
 {% block navbar %}
-    
+ 
     
 {% endblock %}
 
@@ -15,10 +15,20 @@
 
 <div class="jumbotron">
 <div class="container">
-<h1>Dashboard</h1>
-<p>View all deployed models below</p>
+  <h1>Classified text</h1>
+        {% for article in articles %}
+            <b><a href="{{article.link}}">{{article.title}}</a></b><br />
+            <i>{{article.published}}</i><br />
+            <p>{{article.summary}}</p> 
+            <hr />
+        {% endfor %}
+        
+<h1>Feedback</h1>
+<p> How did the model do?/p>
 </div>
 </div>
+
+
 <div class="container">
 <div class="row">
 <div class="col-md-12">
