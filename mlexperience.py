@@ -109,6 +109,14 @@ def web_log():
     else:
         return redirect(url_for('dashboard'))  
 
+@app.route("/admin/access_log")
+@login_required
+def access_log():
+    if (is_admin()):
+        return render_template('auth_logs.html')
+    else:
+        return redirect(url_for('dashboard'))  
+
 
 @app.route("/account")
 @login_required

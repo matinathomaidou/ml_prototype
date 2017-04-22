@@ -8,6 +8,9 @@ Created on Wed Apr 19 15:45:47 2017
 
 import datetime
 import json
+import time
+cur_yymm = (time.strftime("%x"))
+current = datetime.datetime.strptime(cur_yymm, "%m/%d/%y")
 
 import codecs
 items = []
@@ -16,18 +19,23 @@ prev_command = ''
 with codecs.open('/home/david/sii/log/auth.log','rU','utf-8') as f:
     for line in f:
         log_data = {}
+        date = line[:15]
+        date = datetime.datetime.strptime(date, "%b %d %H:%M:%S")
+        date = date.replace(year=current.year)
+        log_data['date'] = str(date)   
+        log_data['dmy'] = (str(date.year) + '/' + str(date.month) + '/' + str(date.day))
         fields = line.split()
         lines.append(fields)
-        log_data['month'] = fields[0]
-        log_data['day'] = fields[1]
-        log_data['time'] = fields[2]
         log_data['host'] = fields[3].replace('ip-','').replace('-',':')
         comm = fields[4].replace(':','')
         if comm[:4] != 'CRON':
             if comm[:4] == 'sshd':
                 if fields[5] == 'Accepted':
                     log_data['tran'] = 'Login -' 
-                    log_data['user'] = fields[8] 
+                    if (fields[8] == 'ubuntu'):
+                        log_data['user'] = 'xxxx'
+                    else:    
+                        log_data['user'] = fields[8] 
                     log_data['from'] = fields[10]
 
                 elif fields[6] == 'reset':

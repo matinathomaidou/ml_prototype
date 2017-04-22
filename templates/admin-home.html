@@ -8,17 +8,18 @@
 {% block content %}
 <div class="jumbotron">
 <div class="container">
-  <h1>Admin</h1>
-  <h2>User management</h2>
+  <h1>Subscribers</h1>
+  <h2>Account management</h2>
   <a href={{ url_for('users_list_admin')}}> List of all users</a>
   <br/>
   <a href={{ url_for('admin_add') }}> Create a new user</a>
   <br/>
   <a href={{ url_for('admin_reset') }}> Reset a password</a>
   <br/>
-  <h1>Admin</h1>
-  <h2>Security & Logs</h2>
+  <h1>Security</h1>
+  <h2>Logs</h2>
   <a href={{ url_for('web_log') }}> Web Log</a>
+  <a href={{ url_for('access_log') }}> Access Log</a>  
   <br/>
 </div>
 </div>  
