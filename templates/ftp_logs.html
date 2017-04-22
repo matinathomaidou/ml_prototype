@@ -7,7 +7,7 @@
     <link rel="exhibit-extension" href="http://api.simile-widgets.org/exhibit/HEAD/extensions/map/map-extension.js"/>
     <link rel="exhibit-extension" href="http://api.simile-widgets.org/exhibit/HEAD/extensions/time/time-extension.js"/>
 
-<link href="/static/auth_log.txt" rel="exhibit/data" type="application/json"/> 
+<link href="/static/ftp_log.txt" rel="exhibit/data" type="application/json"/> 
 
  <style>
        #main { width: 80%; }
@@ -52,7 +52,7 @@ initial-scale=1">
 {% block content %}
 <br/>
 <br/>
-<h2> Server access log</h2>
+<h2> FTP log</h2>
 <br/>
 <br/>
 <table id="main">
@@ -78,11 +78,11 @@ initial-scale=1">
        <!-- Boxes to allow users narrow down their view of feed data -->
        <td id="facets">
          <div ex:role="facet" ex:facetClass="TextSearch"></div>
-         <div ex:role="facet" ex:expression=".from" ex:facetLabel="FromHost"></div>
          <div ex:role="facet" ex:expression=".user" ex:facetLabel="User/Port"></div>
-         <div ex:role="facet" ex:expression=".host" ex:facetLabel="LogInto"></div>
          <div ex:role="facet" ex:expression=".dmy" ex:facetLabel="Date"></div>
-         <div ex:role="facet" ex:expression=".tran" ex:facetLabel="Tran"></div>         
+         <div ex:role="facet" ex:expression=".tran" ex:facetLabel="Tran"></div>  
+         <div ex:role="facet" ex:expression=".obj" ex:facetLabel="Object"></div> 
+         
        </td>
      </tr>
    </table>

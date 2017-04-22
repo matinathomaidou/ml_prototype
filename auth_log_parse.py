@@ -16,7 +16,7 @@ import codecs
 items = []
 lines = []
 prev_command = ''
-with codecs.open('/home/david/sii/log/auth.log','rU','utf-8') as f:
+with codecs.open('/var/log/auth.log','rU','utf-8') as f:
     for line in f:
         log_data = {}
         date = line[:15]
@@ -54,7 +54,7 @@ with codecs.open('/home/david/sii/log/auth.log','rU','utf-8') as f:
         except:
             continue
 log = {'items' : items}
-with open('/home/david/mlexperience/static/auth_log.txt', 'w') as outfile:
+with open('/var/www/ml_prototype/static/auth_log.txt', 'w') as outfile:
     json.dump(log, outfile)  
        
 

@@ -117,6 +117,15 @@ def access_log():
     else:
         return redirect(url_for('dashboard'))  
 
+@app.route("/admin/ftp_log")
+@login_required
+def ftp_log():
+    if (is_admin()):
+        return render_template('ftp_logs.html')
+    else:
+        return redirect(url_for('dashboard'))  
+
+
 
 @app.route("/account")
 @login_required
