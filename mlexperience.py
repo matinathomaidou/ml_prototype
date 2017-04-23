@@ -14,6 +14,21 @@ from forms import LoginForm
 from forms import AdminUserCreateForm
 from forms import AdminUserPW
 import config
+from functools import wraps
+from flask import current_app
+
+def ssl_required(fn):
+    @wraps(fn)
+    def decorated_view(*args, **kwargs):
+        if current_app.config.get("SSL"):
+            if request.is_secure:
+                return fn(*args, **kwargs)
+            else:
+                return redirect(request.url.replace("http://", "https://"))
+        
+        return fn(*args, **kwargs)
+            
+    return decorated_view
 
 
 if config.test:
@@ -47,6 +62,7 @@ def is_admin():
         
 
 @app.route("/")
+@ssl_required
 def home():
     if config.reg_open:
         return render_template("home.html", loginform=LoginForm(), registrationform=RegistrationForm())
@@ -55,6 +71,7 @@ def home():
 
     
 @app.route("/login", methods=["POST"])
+@ssl_required
 def login():
     form = LoginForm(request.form)
     if form.validate():
@@ -82,6 +99,7 @@ def logout():
     return redirect(url_for("home"))       
     
 @app.route("/register", methods=["POST"])
+@ssl_required
 def register():
     form = RegistrationForm(request.form)
     if form.validate():
@@ -97,12 +115,14 @@ def register():
 
     
 @app.route("/dashboard")
+@ssl_required
 @login_required
 def dashboard():
     return render_template("dashboard.html")
     
 @app.route("/admin/web_log")
 @login_required
+@ssl_required
 def web_log():
     if (is_admin()):
         return render_template('logs.html')
@@ -111,6 +131,7 @@ def web_log():
 
 @app.route("/admin/access_log")
 @login_required
+@ssl_required
 def access_log():
     if (is_admin()):
         return render_template('auth_logs.html')
@@ -119,6 +140,7 @@ def access_log():
 
 @app.route("/admin/ftp_log")
 @login_required
+@ssl_required
 def ftp_log():
     if (is_admin()):
         return render_template('ftp_logs.html')
@@ -129,12 +151,14 @@ def ftp_log():
 
 @app.route("/account")
 @login_required
+@ssl_required
 def account():
     return render_template("account.html")
     
     
 @app.route('/admin')
 @login_required
+@ssl_required
 #@admin_login_required
 def home_admin():  
     if (is_admin()):
@@ -145,6 +169,7 @@ def home_admin():
 
 @app.route('/admin/users-list')
 @login_required
+@ssl_required
 #@User.is_admin()
 def users_list_admin():
     if (is_admin()):
@@ -155,6 +180,7 @@ def users_list_admin():
    
 @app.route('/admin/users-list/delete-user/<id>', methods=["GET","POST"])
 @login_required
+@ssl_required
 #@User.is_admin()
 def users_delete_admin(id):
     if (is_admin()):
@@ -166,6 +192,7 @@ def users_delete_admin(id):
     
 @app.route("/admin/registered", methods=["POST"])
 @login_required
+@ssl_required
 #@User.is_admin()
 def register_admin():
     if (is_admin()):
@@ -192,6 +219,7 @@ def register_admin():
   
 @app.route("/admin/requested_reg")
 @login_required
+@ssl_required
 #@User.is_admin()
 def admin_add():
     if (is_admin()):  
@@ -202,6 +230,7 @@ def admin_add():
  
 @app.route("/admin/pw_reset")
 @login_required
+@ssl_required
 #@User.is_admin()
 def admin_reset():
     if (is_admin()):  
@@ -213,6 +242,7 @@ def admin_reset():
 
 @app.route("/admin/pw_submit", methods=["POST"])
 @login_required
+@ssl_required
 #@User.is_admin()
 def admin_pw_update():    
     if (is_admin()):  
@@ -234,9 +264,9 @@ def admin_pw_update():
     else:
         return redirect(url_for('dashboard'))
   
-if __name__ == '__main__':
-     app.run(port=5000, debug=True)
 
-    
+if __name__ == "__main__":
+    context = ('host.crt', 'host.key')
+    app.run(host='0.0.0.0', port=80, ssl_context=context, threaded=True, debug=True)   
     
 
