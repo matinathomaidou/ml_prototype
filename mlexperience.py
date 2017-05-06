@@ -56,8 +56,7 @@ def is_admin():
             return False
      except:
         return False
- 
-     
+    
  
 class SecuredStaticFlask(Flask):
     def send_static_file(self, filename):
