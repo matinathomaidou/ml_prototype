@@ -2,7 +2,6 @@
 #-*-coding: utf-8 -*-
 """
 Created on Wed Apr 12 16:37:19 2017
-
 @author: david
 """
 
@@ -25,3 +24,5 @@ class User:
         
     def is_admin(self):
         return self.is_admin
+
+

@@ -16,6 +16,8 @@ from forms import AdminUserPW
 import config
 from functools import wraps
 from flask import current_app
+from weather import get_local_time, query_api
+
 
 def ssl_required(fn):
     @wraps(fn)
@@ -30,6 +32,7 @@ def ssl_required(fn):
             
     return decorated_view
 
+sec_files = config.sec_files
 
 if config.test:
     from mockdbhelper import MockDBHelper as DBHelper
@@ -42,12 +45,6 @@ from passwordhelper import PasswordHelper
 DB = DBHelper()
 PH = PasswordHelper()
 
-app = Flask(__name__)
-app.secret_key = config.secret_key
-
-login_manager = LoginManager(app)
-
-
 
 def is_admin():
      try:   
@@ -58,8 +55,71 @@ def is_admin():
         else:
             return False
      except:
-        return True
+        return False
+    
+ 
+class SecuredStaticFlask(Flask):
+    def send_static_file(self, filename):
+        if (filename.strip() in sec_files):
+            if is_admin():
+                return super(SecuredStaticFlask, self).send_static_file(filename)
+            else:
+                try:
+                    if(current_user.is_authenicated()):
+                        return render_template("dashboard.html")
+                except:
+                    if config.reg_open:
+                        return render_template("home.html", loginform=LoginForm(), registrationform=RegistrationForm())
+                    else:
+                        return render_template("home.html", loginform=LoginForm(), registrationform=None)  
+        else:
+            return super(SecuredStaticFlask, self).send_static_file(filename)     
         
+    def send_file(self, filename):
+        print(filename)
+        sec_files = ['log.txt', 'ftp_log.txt','auth_log.txt']
+        if (filename.strip() in sec_files):
+            if is_admin():
+                return super(SecuredStaticFlask, self).send_file(filename)
+            else:
+                try:
+                    if(current_user.is_authenicated()):
+                        return render_template("dashboard.html")
+                except:
+                    if config.reg_open:
+                        return render_template("home.html", loginform=LoginForm(), registrationform=RegistrationForm())
+                    else:
+                        return render_template("home.html", loginform=LoginForm(), registrationform=None) 
+        else:
+            return super(SecuredStaticFlask, self).send_file(filename)          
+        
+    def send_from_directory(self, filename):
+        print(filename)
+        sec_files = ['log.txt', 'ftp_log.txt','auth_log.txt']
+        if (filename.strip() in sec_files):
+            if is_admin():
+                return super(SecuredStaticFlask, self).send_from_directory(filename)
+            else:
+                try:
+                    if(current_user.is_authenicated()):
+                        return render_template("dashboard.html")
+                except:
+                    if config.reg_open:
+                        return render_template("home.html", loginform=LoginForm(), registrationform=RegistrationForm())
+                    else:
+                        return render_template("home.html", loginform=LoginForm(), registrationform=None) 
+        else:
+            return super(SecuredStaticFlask, self).send_from_directory(filename)     
+
+    def get_send_file_max_age(self, filename):
+            return 0
+
+        
+       
+app = SecuredStaticFlask(__name__)
+app.secret_key = config.secret_key
+
+login_manager = LoginManager(app)
 
 @app.route("/")
 @ssl_required
@@ -120,6 +180,13 @@ def register():
 def dashboard():
     return render_template("dashboard.html")
     
+    
+@app.route("/dashboard/news_service")
+@ssl_required
+@login_required
+def news_service():
+    return render_template("model.html")    
+    
 @app.route("/admin/web_log")
 @login_required
 @ssl_required
@@ -146,8 +213,6 @@ def ftp_log():
         return render_template('ftp_logs.html')
     else:
         return redirect(url_for('dashboard'))  
-
-
 
 @app.route("/account")
 @login_required
@@ -263,6 +328,26 @@ def admin_pw_update():
                 return render_template("admin_password.html", loginform=None, registrationform=form)   
     else:
         return redirect(url_for('dashboard'))
+
+
+@app.route('/dashboard/news_service/city/', methods=['POST'])
+def index():
+    data = []
+    error = None
+    if request.method == 'POST':
+        city1 = request.form.get('city1')
+        city2 = request.form.get('city2')
+        for c in (city1, city2):
+            resp = query_api(c)
+            if resp:
+                data.append(resp)
+        if len(data) != 2:
+            error = 'Did not get complete response from Weather API'
+    return render_template("model.html",
+                           data=data,
+                           error=error,
+                           time=get_local_time)
+
   
 
 if __name__ == "__main__":

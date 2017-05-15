@@ -61,3 +61,4 @@ for entry in log['items']:
 
 with open('/var/www/ml_prototype/static/log.js', 'w') as outfile:
     json.dump(log, outfile)    
+

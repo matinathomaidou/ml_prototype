@@ -46,3 +46,4 @@ with open('/var/www/ml_prototype/static/ftp_log.txt', 'w') as outfile:
        
 
  
+

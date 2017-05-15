@@ -1,4 +1,8 @@
 *.pyc
 config.py
 .Rhistory
+*.key
+*.crt
+*.txt
+__pycache__
 

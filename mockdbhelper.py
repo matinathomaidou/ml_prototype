@@ -16,5 +16,4 @@ class MockDBHelper:
 
     def add_user(self, email, salt, hashed):
         MOCK_USERS.append({"email": email, "salt": salt, "hashed": hashed, "admin": "N"})  
-            
-        
+

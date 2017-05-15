@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block metarefresh %} 
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+<div class="container">
+<div class="navbar-header">
+<a class="navbar-brand" href="/dashboard">Dashboard</a>
+<a class="navbar-brand" href="/account">Account</a>
+<a class="navbar-brand" href={{ url_for('home_admin') }}> Admin</a>
+<a class="navbar-brand" href="/logout">Logout</a>
+</div>
+</div>
+</nav>
+{% endblock %}
+
+
+{% block content %}
+<div class="jumbotron">
+<div class="container">
+
+
+<h1>Model</h1>
+<h1>Compare the Weather of 2 Cities: </h1>
+                               
+<form class="pure-form" action="/dashboard/news_service/city/" method="POST">
+    <input type="text" name="city1" value="{{ request.form['city1'] }}" placeholder="Enter city 1"/>
+    <input type="text" name="city2" value="{{ request.form['city2'] }}" placeholder="Enter city 2"/>
+	<button type="submit" class="pure-button pure-button-primary">Show Weather</button>
+</form>
+
+{% if error %}
+    <p class='alert'>{{ error }}</p>
+{% elif data %}
+    <table class="pure-table">
+        <tr>
+            <th>City</th>
+            <th>Description</th>
+            <th>Temperature</th>
+            <th>Humidity</th>
+            <th>Sunrise</th>
+            <th>Sunset</th>
+        </tr>
+        {% for d in data %}
+            <tr>
+                <td>{{ d['name'] }} ({{ d['sys']['country'] }})</td>
+                <td>{{ d['weather'][0]['description'] }}</td>
+                <td>{{ d['main']['temp'] }} °C</td>
+                <td>{{ d['main']['humidity'] }}</td>
+                <td>{{ time(d['sys']['sunrise'], d['sys']['country'], d['name']) }}</td>
+                <td>{{ time(d['sys']['sunset'], d['sys']['country'], d['name']) }}</td>
+            </tr>		
+        {% endfor %}
+    </table>
+{% endif %}
+{% endblock %}
+
+
+
