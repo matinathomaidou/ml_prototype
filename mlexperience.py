@@ -56,8 +56,7 @@ def is_admin():
             return False
      except:
         return False
- 
-     
+    
  
 class SecuredStaticFlask(Flask):
     def send_static_file(self, filename):
@@ -353,6 +352,7 @@ def index():
 
 if __name__ == "__main__":
     context = ('host.crt', 'host.key')
-    app.run(host='0.0.0.0', port=80, ssl_context=context, threaded=True, debug=True)   
+    app.run(port=80, ssl_context=context, threaded=True, debug=True)   
     
+
 

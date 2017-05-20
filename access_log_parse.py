@@ -59,5 +59,6 @@ for entry in log['items']:
     entry['time'] = str(time)
     entry['status'] = entry['status'] + '-' + apache_codes[entry['status']]
 
-with open('/var/www/ml_prototype/static/log.js', 'w') as outfile:
+with open('/var/www/ml_prototype/static/log.txt', 'w') as outfile:
     json.dump(log, outfile)    
+
