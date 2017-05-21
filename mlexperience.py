@@ -254,6 +254,19 @@ def users_delete_admin(id):
     
     else:
         return redirect(url_for('dashboard'))
+
+   
+@app.route('/admin/users-list/edit-user/<id>', methods=["GET","POST"])
+@login_required
+@ssl_required
+#@User.is_admin()
+def users_edit_admin(id):
+    if (is_admin()):
+        DB.toggle_admin(id)
+        return redirect(url_for('users_list_admin'))
+    
+    else:
+        return redirect(url_for('dashboard'))
     
 @app.route("/admin/registered", methods=["POST"])
 @login_required
