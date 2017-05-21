@@ -49,6 +49,7 @@ def web_scrape(web_index):
     soup=BeautifulSoup(page, 'lxml')
     return soup
 
+
     #If encoding cannot be determined exit. #
     #Site declares to be utf-8 so UnicodeDecodeError should not happen - we will see#
       
@@ -112,6 +113,41 @@ for passage in range (0, len(paras)):
 
 words = tokenize(text)   
 
+REUTERS = 'http://feeds.reuters.com/'
+REUTERS_SUB = ['/news/artsculture',
+              '/reuters/businessNews']
+
+reuters_feed = REUTERS + REUTERS_SUB[0]
+feed2 = feedparser.parse(reuters_feed)
+first_article = feed2['entries'][0]
+obj = web_scrape(first_article['link'])  
+paras = obj.find_all('p')
+text = ''
+
+for passage in range (0, len(paras)):
+    try:
+        if len(paras[passage].text) > 3:
+            text = text + ' ' + (paras[passage].text)
+    except:
+        continue
+
+words = tokenize(text)    
+
+wired = 'https://www.wired.com/feed'
+feed3 = feedparser.parse(wired)
+first_article = feed3['entries'][1]
+obj = web_scrape(first_article['link'])  
+paras = obj.find_all('p')
+text = ''
+
+for passage in range (0, len(paras)):
+    try:
+        if len(paras[passage].text) > 3:
+            text = text + ' ' + (paras[passage].text)
+    except:
+        continue
+
+words = tokenize(text)  
 
 
 
