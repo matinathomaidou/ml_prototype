@@ -91,6 +91,8 @@ def tokenize(text):
     return filter_words      
 
       
+rec = {}   
+simslist = []   
 
 BBC_FEED = 'http://feeds.bbci.co.uk/news/rss.xml'
 feed = feedparser.parse(BBC_FEED)
@@ -108,60 +110,73 @@ for passage in range (12, len(paras)):
         continue
  
 
-words = tokenize(text)   
+words = tokenize(text)  
 
+rec['ml_id'] = 'todo'
+rec['link'] = first_article['link']
+rec['title'] = first_article['title']
+rec['summary'] = first_article['summary']
+rec['bagofwords'] = words 
+rec['date'] = first_article['published']
+rec['topic'] = 'todo'
+rec['simlist'] = simslist
+ 
 
-FOX_FEED = 'http://feeds.foxnews.com/foxnews/latest'
-feed1 = feedparser.parse(FOX_FEED)
-first_article = feed1['entries'][0]
-obj = web_scrape_alt(first_article['link'])    
-paras = obj.find_all('p')
-text = ''
+#this function just removes these prototyped scrapes for the short while
+def others():
 
-for passage in range (0, len(paras)):
-    try:
-        if len(paras[passage].text) > 3:
-            text = text + ' ' + (paras[passage].text)
-    except:
-        continue
+    FOX_FEED = 'http://feeds.foxnews.com/foxnews/latest'
+    feed1 = feedparser.parse(FOX_FEED)
+    first_article = feed1['entries'][0]
+    obj = web_scrape_alt(first_article['link'])    
+    paras = obj.find_all('p')
+    text = ''
 
-words = tokenize(text)   
+    for passage in range (0, len(paras)):
+        try:
+            if len(paras[passage].text) > 3:
+                text = text + ' ' + (paras[passage].text)
+        except:
+            continue
 
-REUTERS = 'http://feeds.reuters.com/'
-REUTERS_SUB = ['/news/artsculture',
+    words = tokenize(text)   
+
+    REUTERS = 'http://feeds.reuters.com/'
+    REUTERS_SUB = ['/news/artsculture',
               '/reuters/businessNews']
 
-reuters_feed = REUTERS + REUTERS_SUB[0]
-feed2 = feedparser.parse(reuters_feed)
-first_article = feed2['entries'][0]
-obj = web_scrape_alt(first_article['link'])  
-paras = obj.find_all('p')
-text = ''
+    reuters_feed = REUTERS + REUTERS_SUB[0]
+    feed2 = feedparser.parse(reuters_feed)
+    first_article = feed2['entries'][0]
+    obj = web_scrape_alt(first_article['link'])  
+    paras = obj.find_all('p')
+    text = ''
 
-for passage in range (0, len(paras)):
-    try:
-        if len(paras[passage].text) > 3:
-            text = text + ' ' + (paras[passage].text)
-    except:
-        continue
+    for passage in range (0, len(paras)):
+        try:
+            if len(paras[passage].text) > 3:
+                text = text + ' ' + (paras[passage].text)
+        except:
+            continue
 
-words = tokenize(text)    
+    words = tokenize(text)    
 
-wired = 'https://www.wired.com/feed'
-feed3 = feedparser.parse(wired)
-first_article = feed3['entries'][1]
-obj = web_scrape_alt(first_article['link'])  
-paras = obj.find_all('p')
-text = ''
+    wired = 'https://www.wired.com/feed'
+    feed3 = feedparser.parse(wired)
+    first_article = feed3['entries'][1]
+    obj = web_scrape_alt(first_article['link'])  
+    paras = obj.find_all('p')
+    text = ''
 
-for passage in range (0, len(paras)):
-    try:
-        if len(paras[passage].text) > 3:
-            text = text + ' ' + (paras[passage].text)
-    except:
-        continue
+    for passage in range (0, len(paras)):
+        try:
+            if len(paras[passage].text) > 3:
+                text = text + ' ' + (paras[passage].text)
+        except:
+            continue
 
-words = tokenize(text)  
+    words = tokenize(text)  
+    return words
 
 
 
