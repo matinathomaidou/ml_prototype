@@ -112,14 +112,14 @@ for passage in range (12, len(paras)):
 
 words = tokenize(text)  
 
-rec['ml_id'] = 'todo'
+rec['ml_id'] = 'todo'  #this needs to be a unique incremental number - perhaps MongoDb will help
 rec['link'] = first_article['link']
 rec['title'] = first_article['title']
 rec['summary'] = first_article['summary']
 rec['bagofwords'] = words 
 rec['date'] = first_article['published']
-rec['topic'] = 'todo'
-rec['simlist'] = simslist
+rec['topic'] = 'todo' #this needs to be the class label from the machine learning model
+rec['simlist'] = simslist #this needs to be a list of similar documents based on tfidf vector and similarity (GENSIM)
  
 
 #this function just removes these prototyped scrapes for the short while
