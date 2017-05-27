@@ -221,19 +221,9 @@ def ftp_log():
 @ssl_required
 def account():
     curr = current_user.get_id()
-    stored_profile = DB.user_profile_read(curr)  
-    if (stored_profile):
-        profile = stored_profile
-        mode = "/user/profile_submit/<Update>"
-    else:
-        profile = {}
-        profile['name'] = 'Your full name'
-        profile['city'] = 'Your home city'
-        profile['news'] = 'Favorite news topic'
-        profile['currency'] = 'Favorite currency'
-        profile['share'] = 'Favorite share'
-        mode = "/user/profile_submit/<Insert>"
-    return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode=mode)
+    profile = DB.user_profile_read(curr)  
+
+    return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode='')
     
     
 @app.route('/admin')
@@ -393,32 +383,26 @@ def user_pw_update():
                 form.password.errors.append("Fix errors and re-submit!")               
                 return render_template("account.html", onloadmessage="Password error", passwordform=form, userpref=None, toggle= False)   
                 
-@app.route("/user/profile_submit/<mode>", methods=["POST"])
+@app.route("/user/profile_submit", methods=["POST"])
 @login_required
 @ssl_required
 def user_profile_update(mode):
     print(mode)
     form = UserPref(request.form)
     curr = current_user.get_id()
+    profile = {}
+    profile['name'] = form.name.data
+    profile['city'] = form.city.data
+    profile['news'] = form.news_pref.data
+    profile['currency'] = form.currency.data
+    profile['share'] = form.share.data
     if form.validate():
-        profile = {}
-        profile['name'] = form.name.data
-        profile['city'] = form.city.data
-        profile['news'] = form.news_pref.data
-        profile['currency'] = form.currency.data
-        profile['share'] = form.share.data
-        print(profile, '-', curr)
-        if (mode == 'Update'):
-            DB.user_profile_update(curr, profile)
-        else:
-            DB.user_profile_insert(curr, profile)
-            mode = 'Update'
-        
+        DB.user_profile_update(curr, profile)       
         return redirect(url_for('account'))    
     
     else:
         form.name.errors.append('Fix errors')
-        return render_template("account.html", passwordform=None, userpref=form, toggle= True, profile={}, mode=mode) 
+        return render_template("account.html", passwordform=None, userpref=form, toggle= True, profile=profile, mode='') 
 
 
                 

@@ -24,7 +24,7 @@
       {% else %}
         <div class="tab-pane fade" id="home">	
       {% endif %}  
-      <form id="tab1", class="form-horizontal" action="/user/profile_submit/<'Insert'>" method="POST">
+      <form id="tab1", class="form-horizontal" action="/user/profile_submit" method="POST">
         <div class="col-md-4">
         	{% if userpref %}
 			{{ userpref.csrf_token }}
