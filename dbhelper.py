@@ -47,7 +47,7 @@ class DBHelper:
 
     def pw_user_update(self, email, salt, hashed, is_admin):
         self.db.users.update({"email": email}, {"$set": {"salt": salt, "hashed":hashed}})
-        
+      
 
     def user_profile_read(self, email):
         return self.db.user_profiles.find_one({'email': email})

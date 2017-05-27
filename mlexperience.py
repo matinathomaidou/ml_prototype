@@ -221,8 +221,13 @@ def ftp_log():
 @ssl_required
 def account():
     curr = current_user.get_id()
-    profile = DB.user_profile_read(curr)  
-
+    profile_r = DB.user_profile_read(curr)  
+    profile = {}
+    profile['name'] = profile_r['profile']['name']
+    profile['city'] = profile_r['profile']['city']
+    profile['news'] = profile_r['profile']['news']
+    profile['currency'] = profile_r['profile']['currency']
+    profile['share'] = profile_r['profile']['share']
     return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode='')
     
     
@@ -377,7 +382,7 @@ def user_pw_update():
                 salt = PH.get_salt()
                 hashed = PH.get_hash((form.password2.data).encode() + salt)
                 DB.pw_user_update(curr, salt, hashed, 'N')
-                return render_template("account.html", onloadmessage="Password changed - Inform the user.  Thank you!.", passwordform=UserPW(), userpref=UserPref())
+                return redirect(url_for('account')) 
 
         else:
                 form.password.errors.append("Fix errors and re-submit!")               
@@ -386,8 +391,7 @@ def user_pw_update():
 @app.route("/user/profile_submit", methods=["POST"])
 @login_required
 @ssl_required
-def user_profile_update(mode):
-    print(mode)
+def user_profile_update():
     form = UserPref(request.form)
     curr = current_user.get_id()
     profile = {}
