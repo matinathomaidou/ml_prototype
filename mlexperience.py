@@ -13,6 +13,8 @@ from forms import RegistrationForm
 from forms import LoginForm
 from forms import AdminUserCreateForm
 from forms import AdminUserPW
+from forms import UserPW
+from forms import UserPref
 import config
 from functools import wraps
 from flask import current_app
@@ -214,11 +216,24 @@ def ftp_log():
     else:
         return redirect(url_for('dashboard'))  
 
-@app.route("/account")
+@app.route("/account", methods=['GET'])
 @login_required
 @ssl_required
 def account():
-    return render_template("account.html")
+    curr = current_user.get_id()
+    stored_profile = DB.user_profile_read(curr)  
+    if (stored_profile):
+        profile = stored_profile
+        mode = "/user/profile_submit/<Update>"
+    else:
+        profile = {}
+        profile['name'] = 'Your full name'
+        profile['city'] = 'Your home city'
+        profile['news'] = 'Favorite news topic'
+        profile['currency'] = 'Favorite currency'
+        profile['share'] = 'Favorite share'
+        mode = "/user/profile_submit/<Insert>"
+    return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode=mode)
     
     
 @app.route('/admin')
@@ -361,6 +376,52 @@ def index():
                            error=error,
                            time=get_local_time)
 
+@app.route("/user/pw_submit", methods=["POST"])
+@login_required
+@ssl_required
+#@User.is_admin()
+def user_pw_update():    
+        form = UserPW(request.form)
+        curr = current_user.get_id()
+        if form.validate():
+                salt = PH.get_salt()
+                hashed = PH.get_hash((form.password2.data).encode() + salt)
+                DB.pw_user_update(curr, salt, hashed, 'N')
+                return render_template("account.html", onloadmessage="Password changed - Inform the user.  Thank you!.", passwordform=UserPW(), userpref=UserPref())
+
+        else:
+                form.password.errors.append("Fix errors and re-submit!")               
+                return render_template("account.html", onloadmessage="Password error", passwordform=form, userpref=None, toggle= False)   
+                
+@app.route("/user/profile_submit/<mode>", methods=["POST"])
+@login_required
+@ssl_required
+def user_profile_update(mode):
+    print(mode)
+    form = UserPref(request.form)
+    curr = current_user.get_id()
+    if form.validate():
+        profile = {}
+        profile['name'] = form.name.data
+        profile['city'] = form.city.data
+        profile['news'] = form.news_pref.data
+        profile['currency'] = form.currency.data
+        profile['share'] = form.share.data
+        print(profile, '-', curr)
+        if (mode == 'Update'):
+            DB.user_profile_update(curr, profile)
+        else:
+            DB.user_profile_insert(curr, profile)
+            mode = 'Update'
+        
+        return redirect(url_for('account'))    
+    
+    else:
+        form.name.errors.append('Fix errors')
+        return render_template("account.html", passwordform=None, userpref=form, toggle= True, profile={}, mode=mode) 
+
+
+                
   
 
 if __name__ == "__main__":
