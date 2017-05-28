@@ -15,6 +15,7 @@ from forms import AdminUserCreateForm
 from forms import AdminUserPW
 from forms import UserPW
 from forms import UserPref
+from forms import UserLeave
 import config
 from functools import wraps
 from flask import current_app
@@ -221,14 +222,8 @@ def ftp_log():
 @ssl_required
 def account():
     curr = current_user.get_id()
-    profile_r = DB.user_profile_read(curr)  
-    profile = {}
-    profile['name'] = profile_r['profile']['name']
-    profile['city'] = profile_r['profile']['city']
-    profile['news'] = profile_r['profile']['news']
-    profile['currency'] = profile_r['profile']['currency']
-    profile['share'] = profile_r['profile']['share']
-    return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode='')
+    profile = DB.user_profile_read(curr)  
+    return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode='', userleave=UserLeave())
     
     
 @app.route('/admin')
@@ -378,11 +373,12 @@ def index():
 def user_pw_update():    
         form = UserPW(request.form)
         curr = current_user.get_id()
+        profile = DB.user_profile_read(curr)  
         if form.validate():
                 salt = PH.get_salt()
                 hashed = PH.get_hash((form.password2.data).encode() + salt)
                 DB.pw_user_update(curr, salt, hashed, 'N')
-                return redirect(url_for('account')) 
+                return render_template("account.html", passwordform=UserPW(), userpref=UserPref(), toggle= True, profile=profile, mode='', onloadmessage="Password changed!.")  
 
         else:
                 form.password.errors.append("Fix errors and re-submit!")               
@@ -402,13 +398,26 @@ def user_profile_update():
     profile['share'] = form.share.data
     if form.validate():
         DB.user_profile_update(curr, profile)       
-        return redirect(url_for('account'))    
+        return render_template("account.html", passwordform=UserPW(), userpref=UserPref(), toggle= True, profile=profile, mode='', onloadmessage="Profile changed!.", userleave=UserLeave())   
     
     else:
         form.name.errors.append('Fix errors')
         return render_template("account.html", passwordform=None, userpref=form, toggle= True, profile=profile, mode='') 
 
-
+@app.route("/user/leave_submit", methods=["POST"])
+@login_required
+@ssl_required
+def user_leave():
+    form = UserLeave(request.form)
+    curr = current_user.get_id()
+    if form.validate():
+        DB.user_delete(curr)
+        logout_user()
+        return redirect(url_for('home'))  
+    
+    else:
+        form.bye1.errors.append('Fix errors')
+        return render_template("account.html", passwordform=None, userpref=None, toggle= True, profile={}, mode='', userleave=form) 
                 
   
 

@@ -54,5 +54,9 @@ class UserPref(Form):
     news_pref = StringField(u'News', [validators.DataRequired(), validators.length(max=200)])
     currency = StringField(u'News', [validators.DataRequired(), validators.length(max=200)])
     share = StringField(u'News', [validators.DataRequired(), validators.length(max=200)])
-    submit = SubmitField('submit', [validators.DataRequired()])      
-
+    submit = SubmitField('submit', [validators.DataRequired()])   
+    
+class UserLeave(Form):
+    bye1 = StringField(u'Leaving', [validators.optional(), validators.length(max=3)])
+    bye2 = StringField(u'US', [validators.DataRequired(), validators.length(max=3)])
+    submit = SubmitField('submit', [validators.DataRequired()]) 

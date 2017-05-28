@@ -50,10 +50,15 @@ class DBHelper:
       
 
     def user_profile_read(self, email):
-        return self.db.user_profiles.find_one({'email': email})
+        profiler_r = self.db.user_profiles.find_one({'email': email})
+        return profiler_r['profile']
 
     def user_profile_update(self, email, profile):
         self.db.user_profiles.update({'email': email}, {'$set' : {'profile' : profile}})
         
-        
+    def user_delete(self, email):
+        self.db.users.delete_many({'email' : email})
+        self.db.user_profiles.delete_many({'email' : email})
+    
+    
 

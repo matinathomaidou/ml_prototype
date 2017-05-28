@@ -1,9 +1,15 @@
 {% extends "base.html" %}
+
+{% block bodytag %}
+    <body {% if onloadmessage %} onload="alert('{{onloadmessage}}');" {% endif %}>
+{% endblock %}
+
 {% block content %}
 <div class="jumbotron">
 <div class="container">
 <h1>Account</h1>
 <p>Manage my account</p>
+
 </div>
 </div>
 <div class="container">
@@ -15,14 +21,15 @@
 </div>
 <div class="container">
     <ul class="nav nav-tabs">
-      <li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
-      <li><a href="#profile" data-toggle="tab">Password</a></li>
+      <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+      <li><a href="#password" data-toggle="tab">Password</a></li>
+      <li><a href='#leaveus' data-toggle='tab'>Leave us</a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
       {% if toggle %}
-      	<div class="tab-pane active in" id="home">
+      	<div class="tab-pane active in" id="profile">
       {% else %}
-        <div class="tab-pane fade" id="home">	
+        <div class="tab-pane fade" id="profile">	
       {% endif %}  
       <form id="tab1", class="form-horizontal" action="/user/profile_submit" method="POST">
         <div class="col-md-4">
@@ -69,12 +76,8 @@
       </div>
      </div>
 
-     {% if toggle %}
-      	<div class="tab-pane fade" id="profile">
-      {% else %}
-        <div class="tab-pane active in" id="profile">
-      {% endif %} 
 
+      <div class="tab-pane fade" id="password">
     	<form id="tab2" class="form-horizontal" action="/user/pw_submit" method="POST">    		
         	<div class="col-md-4">
           		{% if passwordform %}
@@ -99,6 +102,37 @@
                     <div class="col-sm-9">
                     {{ passwordform.submit(class="btn btn-primary btn-block")}}
                 	</div>
+             </div>
+             </div>  
+        </form>
+        {% endif %} 
+     </div>       
+
+      <div class="tab-pane fade" id="leaveus">
+      <form id="tab3" class="form-horizontal" action="/user/leave_submit" method="POST">       
+          <div class="col-md-4">
+              {% if userleave %}
+            {{ userleave.csrf_token }}
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if userleave.bye1.errors %}
+                  <ul class="errors">{% for error in userleave.bye1.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ userleave.bye1(class="form-control", placeholder="Enter bye" )}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if userleave.bye2.errors %}
+                  <ul class="errors">{% for error in userleave.bye2.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ userleave.bye2(class="form-control", placeholder="Re-enter bye" )}}
+              </div>
+             </div> 
+             <div class="form-group">
+                    <div class="col-sm-9">
+                    {{ userleave.submit(class="btn btn-primary btn-block")}}
+                  </div>
              </div>
              </div>  
         </form>
