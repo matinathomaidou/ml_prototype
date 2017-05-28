@@ -41,17 +41,28 @@ apache_codes = {'200':	'OK',
 '504':	'Gateway Timeout',
 '505':'HTTP Version Not Supported'
 }
-
 import datetime
 import json
+import unicodedata
 
 import codecs
+import re
+
+
 data = []
 with codecs.open('/var/log/apache2/access.log','rU','utf-8') as f:
     for line in f:
-       data.append(json.loads(line))
-
-    
+       try:
+           # handle escaped characters
+           jline = unicodedata.normalize('NFKC',line)
+           # regular expression to take care of it
+           re.sub(r'\\x??', '', jline)
+           data.append(json.loads(jline))
+       except:
+           print(line)
+           error=line
+           continue
+   
 log = {"items" : data}    
 for entry in log['items']:
     time = entry['time'].split()[0].strip().replace('[','')
@@ -61,4 +72,5 @@ for entry in log['items']:
 
 with open('/var/www/ml_prototype/static/log.txt', 'w') as outfile:
     json.dump(log, outfile)    
+
 
