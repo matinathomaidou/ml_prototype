@@ -184,11 +184,18 @@ def dashboard():
     return render_template("dashboard.html")
     
     
+@app.route("/dashboard/weather_service")
+@ssl_required
+@login_required
+def weather_service():
+    return render_template("model.html")    
+    
 @app.route("/dashboard/news_service")
 @ssl_required
 @login_required
 def news_service():
-    return render_template("model.html")    
+    news = DB.read_news()
+    return render_template("news_model.html", news=news)      
     
 @app.route("/admin/web_log")
 @login_required

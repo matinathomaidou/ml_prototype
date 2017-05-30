@@ -60,5 +60,14 @@ class DBHelper:
         self.db.users.delete_many({'email' : email})
         self.db.user_profiles.delete_many({'email' : email})
     
-    
+    def read_news(self):
+        news = []
+        for art in self.db.news.find():
+            article = {}
+            article['link'] = art['link']
+            article['title'] = art['title']
+            article['summary'] = art['summary']
+            article['date'] = art['date']
+            news.append(article)
+        return news
 
