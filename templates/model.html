@@ -1,60 +1,86 @@
-{% extends "base.html" %}
-{% block metarefresh %} 
-{% endblock %}
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}">
 
-{% block navbar %}
+<title>Weather service</title>
+<link href="../static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
 <div class="container">
 <div class="navbar-header">
 <a class="navbar-brand" href="/dashboard">Dashboard</a>
 <a class="navbar-brand" href="/account">Account</a>
-<a class="navbar-brand" href={{ url_for('home_admin') }}> Admin</a>
+<a class="navbar-brand" href={{url_for('home_admin')}}> Admin</a>
 <a class="navbar-brand" href="/logout">Logout</a>
 </div>
 </div>
 </nav>
-{% endblock %}
 
 
-{% block content %}
-<div class="jumbotron">
-<div class="container">
+<div class="jumbotron" style="height: 12rem;">
+<div class='container'>
+<h3>Weather information</h3>
+</div>
+</div>
 
 
-<h1>Model</h1>
-<h1>Compare the Weather of 2 Cities: </h1>
-                               
-<form class="pure-form" action="/dashboard/news_service/city/" method="POST">
-    <input type="text" name="city1" value="{{ request.form['city1'] }}" placeholder="Enter city 1"/>
-    <input type="text" name="city2" value="{{ request.form['city2'] }}" placeholder="Enter city 2"/>
-	<button type="submit" class="pure-button pure-button-primary">Show Weather</button>
-</form>
+<div class='container'>
+	<form class="form-group" action="/dashboard/weather_service/city" method="POST">
+	    <input type="text" name="city1" value="{{ request.form['city1'] }}" placeholder="Enter city 1"/>
+    	<input type="text" name="city2" value="{{ request.form['city2'] }}" placeholder="Enter city 2"/>
+		<button type="submit" class="pure-button pure-button-primary">Show Weather</button>
+	</form>
+</div>
 
-{% if error %}
-    <p class='alert'>{{ error }}</p>
-{% elif data %}
-    <table class="pure-table">
+	<div class='container'>
+	<div class='row'>
+	<div class='col-md-12'>
+    <table class="table table-bordered">
+      <thead>
         <tr>
             <th>City</th>
             <th>Description</th>
             <th>Temperature</th>
             <th>Humidity</th>
-            <th>Sunrise</th>
-            <th>Sunset</th>
         </tr>
+      </thead>
+      <tbody>
         {% for d in data %}
             <tr>
                 <td>{{ d['name'] }} ({{ d['sys']['country'] }})</td>
                 <td>{{ d['weather'][0]['description'] }}</td>
                 <td>{{ d['main']['temp'] }} °C</td>
                 <td>{{ d['main']['humidity'] }}</td>
-                <td>{{ time(d['sys']['sunrise'], d['sys']['country'], d['name']) }}</td>
-                <td>{{ time(d['sys']['sunset'], d['sys']['country'], d['name']) }}</td>
             </tr>		
         {% endfor %}
+      </tbody>
     </table>
-{% endif %}
-{% endblock %}
+    </div>
+    </div>
+    </div>
+
+<div class="container">
+<hr>
+<footer>
+<p>&copy; mlexperience.org 2017</p>
+</footer>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster
+-->
+<script
+ src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+</body>
+</html>
+
 
 
 

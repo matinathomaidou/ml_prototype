@@ -5,84 +5,80 @@
 {% endblock %}
 
 {% block content %}
-<div class="jumbotron">
-<div class="container">
-<h1>Account</h1>
-<p>Manage my account</p>
-
+<div class="jumbotron" style="height: 12rem;">
+<div class='container'>
+<h3>Account - Manage your account</h3>
 </div>
 </div>
 <div class="container">
 <div class="row">
-<div class="col-md-12">
+<div class="col-md-4">
 <h2>Your profile</h2>
 </div>
 </div>
 </div>
 <div class="container">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
-      <li><a href="#password" data-toggle="tab">Password</a></li>
-      <li><a href='#leaveus' data-toggle='tab'>Leave us</a></li>
-    </ul>
+	<div>
+    	<ul class="nav nav-tabs">
+      		<li><a href="#profile" data-toggle="tab">Profile</a></li>
+      		<li><a href="#password" data-toggle="tab">Password</a></li>
+      		<li><a href='#leaveus' data-toggle='tab'>Leave us</a></li>
+	    </ul>
+	 </div>   
     <div id="myTabContent" class="tab-content">
-      {% if toggle %}
-      	<div class="tab-pane active in" id="profile">
-      {% else %}
-        <div class="tab-pane fade" id="profile">	
-      {% endif %}  
-      <form id="tab1", class="form-horizontal" action="/user/profile_submit" method="POST">
-        <div class="col-md-4">
-        	{% if userpref %}
+
+   	<div class="tab-pane fade" id="profile">
+   	   {% if userpref %}
+      	<form id="tab1", class="form-horizontal" action="/user/profile_submit" method="POST">
+        	<div class="col-md-9">
 			{{ userpref.csrf_token }}
         	<div class="form-group">
-            <label for="userpref.name" class="col-2 col-form-label">Name</label>
-            	<div class="col-sm-9">
+            	<label for="userpref.name" class="col-md-1 col-form-label">Name</label>
+            	<div class="col-md-7">
                 	{{ userpref.name(class="form-control", value=profile.name)}}
             	</div>
         	</div>  
         	<div class="form-group">
-              <label for="userpref.city" class="col-2 col-form-label">City</label>
-            	<div class="col-sm-9">
+              	<label for="userpref.city" class="col-md-1 col-form-label">City</label>
+            	<div class="col-md-7">
                 	{{ userpref.city(class="form-control", value=profile.city )}}
             	</div>
         	</div> 
-             <div class="form-group">
-              <label for="userpref.news_pref" class="col-2 col-form-label">News</label>   
-            	<div class="col-sm-9">
+            <div class="form-group">
+            	<label for="userpref.news_pref" class="col-md-1 col-form-label">News</label>   
+            		<div class="col-md-7">
                 	{{ userpref.news_pref(class="form-control", value=profile.news )}}
-            	</div>
+            		</div>
         	</div> 
-        	    <div class="form-group">
-              <label for="userpref.currency" class="col-2 col-form-label">Currency</label>     
-            	<div class="col-sm-9">
+        	<div class="form-group">
+            	<label for="userpref.currency" class="col-md-1 col-form-label">Currency</label>     
+            		<div class="col-md-7">
                 	{{ userpref.currency(class="form-control", value=profile.currency )}}
-            	</div>
+            		</div>
         	</div> 
-        	     <div class="form-group">
-                <label for="userpref.share" class="col-2 col-form-label">Share</label>           
-            	<div class="col-sm-9">
+        	<div class="form-group">
+                <label for="userpref.share" class="col-md-1 col-form-label">Share</label>           
+            	<div class="col-md-7">
                 	{{ userpref.share(class="form-control", value=profile.share )}}
             	</div>
         	</div> 
         	<div class="form-group">
-                <div class="col-sm-9">
+                <div class="col-md-4">
                    {{ userpref.submit(class="btn btn-primary btn-block")}}
                 </div>   
-            </div>    	
-        </div>	  
-       </form>
-       {% endif %}
-      </div>
-     </div>
-
+            </div>  
+            </div>      
+       	</form>
+       {% endif %}  
+    </div>
+    
 
       <div class="tab-pane fade" id="password">
     	<form id="tab2" class="form-horizontal" action="/user/pw_submit" method="POST">    		
         	<div class="col-md-4">
           		{% if passwordform %}
-            {{ passwordform.csrf_token }}
-            <div class="form-group">
+            	{{ passwordform.csrf_token }}
+              <div class="form-group">
               <div class="col-sm-9">
                 {% if passwordform.password.errors %}
                   <ul class="errors">{% for error in passwordform.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
@@ -99,18 +95,18 @@
               </div>
              </div> 
              <div class="form-group">
-                    <div class="col-sm-9">
+                    <div class="col-md-4">
                     {{ passwordform.submit(class="btn btn-primary btn-block")}}
                 	</div>
              </div>
-             </div>  
+            {% endif %} 
+            </div>
         </form>
-        {% endif %} 
      </div>       
 
       <div class="tab-pane fade" id="leaveus">
       <form id="tab3" class="form-horizontal" action="/user/leave_submit" method="POST">       
-          <div class="col-md-4">
+        <div class="col-md-4">
               {% if userleave %}
             {{ userleave.csrf_token }}
             <div class="form-group">
@@ -130,14 +126,15 @@
               </div>
              </div> 
              <div class="form-group">
-                    <div class="col-sm-9">
+                    <div class="col-md-4">
                     {{ userleave.submit(class="btn btn-primary btn-block")}}
                   </div>
              </div>
-             </div>  
-        </form>
-        {% endif %} 
+             {% endif %}  
+        </div>         
+     </form>
      </div>       
+  </div>
   </div>
 {% endblock %}
 

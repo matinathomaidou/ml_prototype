@@ -19,7 +19,7 @@ from forms import UserLeave
 import config
 from functools import wraps
 from flask import current_app
-from weather import get_local_time, query_api
+from weather import query_api
 
 
 def ssl_required(fn):
@@ -48,6 +48,8 @@ from passwordhelper import PasswordHelper
 DB = DBHelper()
 PH = PasswordHelper()
 
+data = []
+error = ''
 
 def is_admin():
      try:   
@@ -188,7 +190,7 @@ def dashboard():
 @ssl_required
 @login_required
 def weather_service():
-    return render_template("model.html")    
+    return render_template("model.html", data=data, error=None)    
     
 @app.route("/dashboard/news_service")
 @ssl_required
@@ -355,23 +357,25 @@ def admin_pw_update():
         return redirect(url_for('dashboard'))
 
 
-@app.route('/dashboard/news_service/city/', methods=['POST'])
-def index():
-    data = []
+@app.route('/dashboard/weather_service/city', methods=['POST'])
+@login_required
+@ssl_required
+def weather():
+    if len(data) > 0:    
+        data.pop()
+        data.pop()
     error = None
-    if request.method == 'POST':
-        city1 = request.form.get('city1')
-        city2 = request.form.get('city2')
-        for c in (city1, city2):
-            resp = query_api(c)
-            if resp:
-                data.append(resp)
-        if len(data) != 2:
-            error = 'Did not get complete response from Weather API'
-    return render_template("model.html",
-                           data=data,
-                           error=error,
-                           time=get_local_time)
+    city1 = request.form.get('city1')
+    city2 = request.form.get('city2')
+    for c in (city1, city2):
+         resp = query_api(c)
+         if resp:
+            data.append(resp)
+         
+    if len(data) != 2:
+         error = 'Did not get complete response from Weather API'
+            
+    return redirect(url_for('weather_service'))
 
 @app.route("/user/pw_submit", methods=["POST"])
 @login_required
@@ -385,7 +389,7 @@ def user_pw_update():
                 salt = PH.get_salt()
                 hashed = PH.get_hash((form.password2.data).encode() + salt)
                 DB.pw_user_update(curr, salt, hashed, 'N')
-                return render_template("account.html", passwordform=UserPW(), userpref=UserPref(), toggle= True, profile=profile, mode='', onloadmessage="Password changed!.")  
+                return render_template("account.html", passwordform=UserPW(), userpref=UserPref(), userleave=UserLeave(), toggle= True, profile=profile, mode='', onloadmessage="Password changed!.")  
 
         else:
                 form.password.errors.append("Fix errors and re-submit!")               
