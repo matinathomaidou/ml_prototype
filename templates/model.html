@@ -39,23 +39,23 @@
 
 	<div class='container'>
 	<div class='row'>
-	<div class='col-md-12'>
+	<div class='col-md-7'>
     <table class="table table-bordered">
       <thead>
         <tr>
-            <th>City</th>
-            <th>Description</th>
-            <th>Temperature</th>
-            <th>Humidity</th>
+            <th class='text-center'>City</th>
+            <th class='text-center'>Description</th>
+            <th class='text-center'>Temperature</th>
+            <th class='text-center'>Humidity</th>
         </tr>
       </thead>
       <tbody>
         {% for d in data %}
             <tr>
-                <td>{{ d['name'] }} ({{ d['sys']['country'] }})</td>
-                <td>{{ d['weather'][0]['description'] }}</td>
-                <td>{{ d['main']['temp'] }} °C</td>
-                <td>{{ d['main']['humidity'] }}</td>
+                <td class='text-center'>{{ d['name'] }} ({{ d['sys']['country'] }})</td>
+                <td class='text-center'>{{ d['weather'][0]['description'] }}</td>
+                <td class='text-center'>{{ d['main']['temp'] }} °C</td>
+                <td class='text-center'>{{ d['main']['humidity'] }}</td>
             </tr>		
         {% endfor %}
       </tbody>

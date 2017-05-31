@@ -364,16 +364,22 @@ def weather():
     if len(data) > 0:    
         data.pop()
         data.pop()
-    error = None
+
     city1 = request.form.get('city1')
     city2 = request.form.get('city2')
+    
+    if len(city1) < 3:
+        city1 = 'Dublin'
+    if len(city2) < 3:
+        city2 = 'London'
+    
     for c in (city1, city2):
          resp = query_api(c)
          if resp:
             data.append(resp)
          
     if len(data) != 2:
-         error = 'Did not get complete response from Weather API'
+         return redirect(url_for('dashboard'))
             
     return redirect(url_for('weather_service'))
 
