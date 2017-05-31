@@ -1,12 +1,14 @@
 <html>
 <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}">
 
 <title>Apache web logs</title>
-    <script src="https://api.simile-widgets.org/exhibit/HEAD/exhibit-api.js"></script>
-    <link rel="exhibit-extension" href="https://api.simile-widgets.org/exhibit/HEAD/extensions/map/map-extension.js"/>
-    <link rel="exhibit-extension" href="https://api.simile-widgets.org/exhibit/HEAD/extensions/time/time-extension.js"/>
-
+<script src="https://api.simile-widgets.org/exhibit/HEAD/exhibit-api.js"></script>
+<link rel="exhibit-extension" href="https://api.simile-widgets.org/exhibit/HEAD/extensions/map/map-extension.js"/>
+<link rel="exhibit-extension" href="https://api.simile-widgets.org/exhibit/HEAD/extensions/time/time-extension.js"/>
 <link href="/static/log.txt" rel="exhibit/data" type="application/json"/> 
 
  <style>
@@ -24,16 +26,12 @@
         color: red;
     }
 </style>  
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width,
-initial-scale=1">
-{% block metarefresh %} {% endblock %}
+
 <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-{% block navbar %}
+
 <nav class="navbar navbar-inverse navbar-fixed-top">
 <div class="container">
 <div class="navbar-header">
@@ -46,15 +44,20 @@ initial-scale=1">
 </div>
 </div>
 </nav>
-{% endblock %}
-
-
-{% block content %}
+<div class=container>
+<div class=row>
+<div class="col_md-48">
 <br/>
 <br/>
-<h2> Apache web log</h2>
+<H1> Apache Web log</H1>
 <br/>
 <br/>
+</div>
+</div>
+<div class=row>
+<div class="col-md-12">
+</div>
+<div class="col_md-12">
 <table id="main">
     <tr>
       <!-- The main display area for Exhibit -->
@@ -78,15 +81,19 @@ initial-scale=1">
        <!-- Boxes to allow users narrow down their view of feed data -->
        <td id="facets">
          <div ex:role="facet" ex:facetClass="TextSearch"></div>
-         <div ex:role="facet" ex:expression=".request" ex:facetLabel="Path"></div>
-         <div ex:role="facet" ex:expression=".referer" ex:facetLabel="Referrer"></div>
-         <div ex:role="facet" ex:expression=".remoteIP" ex:facetLabel="Origin"></div>
-         <div ex:role="facet" ex:expression=".userAgent" ex:facetLabel="Client"></div>
-         <div ex:role="facet" ex:expression=".status" ex:facetLabel="Status"></div>
+         <div ex:role="facet" ex:expression=".referer" ex:facetLabel="Referrer" ></div>
+         <div ex:role="facet" ex:expression=".remoteIP" ex:facetLabel="Origin" ></div>
+         <div ex:role="facet" ex:expression=".time" ex:facetLabel="Date" ></div>
        </td>
      </tr>
    </table>
-{% endblock %}
+</div> 
+<div class="col-md-12">
+</div>
+<div class="col-md-12">
+</div>
+</div> 
+</div>   
 
 <div class="container">
 <hr>

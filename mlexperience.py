@@ -13,10 +13,13 @@ from forms import RegistrationForm
 from forms import LoginForm
 from forms import AdminUserCreateForm
 from forms import AdminUserPW
+from forms import UserPW
+from forms import UserPref
+from forms import UserLeave
 import config
 from functools import wraps
 from flask import current_app
-from weather import get_local_time, query_api
+from weather import query_api
 
 
 def ssl_required(fn):
@@ -45,6 +48,8 @@ from passwordhelper import PasswordHelper
 DB = DBHelper()
 PH = PasswordHelper()
 
+data = []
+error = ''
 
 def is_admin():
      try:   
@@ -181,11 +186,18 @@ def dashboard():
     return render_template("dashboard.html")
     
     
+@app.route("/dashboard/weather_service")
+@ssl_required
+@login_required
+def weather_service():
+    return render_template("model.html", data=data, error=None)    
+    
 @app.route("/dashboard/news_service")
 @ssl_required
 @login_required
 def news_service():
-    return render_template("model.html")    
+    news = DB.read_news()
+    return render_template("news_model.html", news=news)      
     
 @app.route("/admin/web_log")
 @login_required
@@ -214,11 +226,13 @@ def ftp_log():
     else:
         return redirect(url_for('dashboard'))  
 
-@app.route("/account")
+@app.route("/account", methods=['GET'])
 @login_required
 @ssl_required
 def account():
-    return render_template("account.html")
+    curr = current_user.get_id()
+    profile = DB.user_profile_read(curr)  
+    return render_template("account.html", passwordform=UserPW(), toggle = True, userpref=UserPref(), profile=profile, mode='', userleave=UserLeave())
     
     
 @app.route('/admin')
@@ -343,24 +357,85 @@ def admin_pw_update():
         return redirect(url_for('dashboard'))
 
 
-@app.route('/dashboard/news_service/city/', methods=['POST'])
-def index():
-    data = []
-    error = None
-    if request.method == 'POST':
-        city1 = request.form.get('city1')
-        city2 = request.form.get('city2')
-        for c in (city1, city2):
-            resp = query_api(c)
-            if resp:
-                data.append(resp)
-        if len(data) != 2:
-            error = 'Did not get complete response from Weather API'
-    return render_template("model.html",
-                           data=data,
-                           error=error,
-                           time=get_local_time)
+@app.route('/dashboard/weather_service/city', methods=['POST'])
+@login_required
+@ssl_required
+def weather():
+    if len(data) > 0:    
+        data.pop()
+        data.pop()
 
+    city1 = request.form.get('city1')
+    city2 = request.form.get('city2')
+    
+    if len(city1) < 3:
+        city1 = 'Dublin'
+    if len(city2) < 3:
+        city2 = 'London'
+    
+    for c in (city1, city2):
+         resp = query_api(c)
+         if resp:
+            data.append(resp)
+         
+    if len(data) != 2:
+         return redirect(url_for('dashboard'))
+            
+    return redirect(url_for('weather_service'))
+
+@app.route("/user/pw_submit", methods=["POST"])
+@login_required
+@ssl_required
+#@User.is_admin()
+def user_pw_update():    
+        form = UserPW(request.form)
+        curr = current_user.get_id()
+        profile = DB.user_profile_read(curr)  
+        if form.validate():
+                salt = PH.get_salt()
+                hashed = PH.get_hash((form.password2.data).encode() + salt)
+                DB.pw_user_update(curr, salt, hashed, 'N')
+                return render_template("account.html", passwordform=UserPW(), userpref=UserPref(), userleave=UserLeave(), toggle= True, profile=profile, mode='', onloadmessage="Password changed!.")  
+
+        else:
+                form.password.errors.append("Fix errors and re-submit!")               
+                return render_template("account.html", onloadmessage="Password error", passwordform=form, userpref=None, toggle= False)   
+                
+@app.route("/user/profile_submit", methods=["POST"])
+@login_required
+@ssl_required
+def user_profile_update():
+    form = UserPref(request.form)
+    curr = current_user.get_id()
+    profile = {}
+    profile['name'] = form.name.data
+    profile['city'] = form.city.data
+    profile['news'] = form.news_pref.data
+    profile['currency'] = form.currency.data
+    profile['share'] = form.share.data
+    if form.validate():
+        DB.user_profile_update(curr, profile)       
+        return render_template("account.html", passwordform=UserPW(), userpref=UserPref(), toggle= True, profile=profile, mode='', onloadmessage="Profile changed!.", userleave=UserLeave())   
+    
+    else:
+        form.name.errors.append('Fix errors')
+        return render_template("account.html", passwordform=None, userpref=form, toggle= True, profile=profile, mode='') 
+
+@app.route("/user/leave_submit", methods=["POST"])
+@login_required
+@ssl_required
+def user_leave():
+    form = UserLeave(request.form)
+    curr = current_user.get_id()
+    if form.validate():
+        DB.user_delete(curr)
+        logout_user()
+        return redirect(url_for('home'))  
+    
+    else:
+        form.bye1.errors.append('Fix errors')
+        return render_template("account.html", passwordform=None, userpref=None, toggle= True, profile={}, mode='', userleave=form) 
+                
   
 
 if __name__ == "__main__":
