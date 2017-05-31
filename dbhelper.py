@@ -17,7 +17,8 @@ class DBHelper:
         self.db = client[DATABASE]
 
     def get_user(self, email):
-        return self.db.users.find_one({"email": email})  
+            return self.db.users.find_one({"email": email})  
+            
 
     def add_user(self, email, salt, hashed, is_admin):
         self.db.users.insert({"email": email, "salt": salt, "hashed": hashed, "admin": is_admin})
@@ -51,16 +52,19 @@ class DBHelper:
 
     def user_profile_read(self, email):
         profiler_r = self.db.user_profiles.find_one({'email': email})
-        if profiler_r:
-            return profiler_r['profile']
-        else:
+        try:
+            if profiler_r['profile']:
+                return profiler_r['profile']
+        except:
             profile = {}
             profile['name'] = ' '
             profile['city'] = ' '
             profile['news'] = ' '
             profile['currency'] = ' '
             profile['share'] = ' '
+            self.db.user_profiles.insert_one({'email': email, 'profile' : profile})
             return profile
+            
     
 
     def user_profile_update(self, email, profile):
