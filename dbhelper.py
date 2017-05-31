@@ -51,7 +51,17 @@ class DBHelper:
 
     def user_profile_read(self, email):
         profiler_r = self.db.user_profiles.find_one({'email': email})
-        return profiler_r['profile']
+        if profiler_r:
+            return profiler_r['profile']
+        else:
+            profile = {}
+            profile['name'] = ' '
+            profile['city'] = ' '
+            profile['news'] = ' '
+            profile['currency'] = ' '
+            profile['share'] = ' '
+            return profile
+    
 
     def user_profile_update(self, email, profile):
         self.db.user_profiles.update({'email': email}, {'$set' : {'profile' : profile}})
