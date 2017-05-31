@@ -34,25 +34,25 @@
 			{{ userpref.csrf_token }}
         	<div class="form-group">
             	<label for="userpref.name" class="col-md-1 col-form-label">Name</label>
-            	<div class="col-md-7">
+            	<div class="col-md-9">
                 	{{ userpref.name(class="form-control", value=profile.name)}}
             	</div>
         	</div>  
         	<div class="form-group">
               	<label for="userpref.city" class="col-md-1 col-form-label">City</label>
-            	<div class="col-md-7">
+            	<div class="col-md-9">
                 	{{ userpref.city(class="form-control", value=profile.city )}}
             	</div>
         	</div> 
             <div class="form-group">
             	<label for="userpref.news_pref" class="col-md-1 col-form-label">News</label>   
-            		<div class="col-md-7">
+            		<div class="col-md-9">
                 	{{ userpref.news_pref(class="form-control", value=profile.news )}}
             		</div>
         	</div> 
         	<div class="form-group">
-            	<label for="userpref.currency" class="col-md-1 col-form-label">Currency</label>     
-            		<div class="col-md-7">
+            	<label for="userpref.currency" class="col-md-1 col-form-label">FX</label>     
+            		<div class="col-md-9">
                 	{{ userpref.currency(class="form-control", value=profile.currency )}}
             		</div>
         	</div> 

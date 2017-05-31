@@ -6,8 +6,15 @@
 
 
 {% block content %}
-<div class="jumbotron">
+<div class="jumbotron" style="height: 12rem;">
+<div class='container'>
+<h3>Admin - Manage mlexperience.org</h3>
+<br />
+</div>
+</div>
+
 <div class="container">
+<div class='Row'>
   <h1>Subscribers</h1>
   <h2>Account management</h2>
   <a href={{ url_for('users_list_admin')}}> List of all users</a>
@@ -23,7 +30,8 @@
   <a href={{ url_for('ftp_log') }}> FTP Log</a> 
   <br/>
 </div>
-</div>  
+</div> 
+</div> 
 {% endblock %}
 
 
