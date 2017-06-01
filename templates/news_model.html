@@ -39,6 +39,7 @@
     <a href="#" class="btn btn-primary btn-sm">Like</a>
     <a href="#" class="btn btn-primary btn-sm">Agree</a>
     <a href="#" class="btn btn-primary btn-sm">Dis-Agree</a>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Feedback</button>
     <hr />
     <div class='card-footer text-muted'> Your view </div>  
     <hr />
@@ -50,6 +51,61 @@
 
 </div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Feedback</h4>
+      </div>
+      <div class="modal-body">
+      	{% if feedback %}
+      	<div class='container'>
+      	<form id="tab1", class="form-horizontal" action="/user/feedback_submit" method="POST">
+			{{ feedback.csrf_token }}
+			{{ feedback.model_id(class="form-control", value=0)}}	
+			{{ feedback.element_id(class="form-control", value=1)}}
+			{{ feedback.date(class="form-control", value=4)}}
+            <div class="form-group">
+            	<label for="feedback.label" class="col-md-1 col-form-label">Category</label>   
+            		<div class="col-md-1">
+                	{{ feedback.label(class="form-control", value=2)}}
+            		</div>
+        	</div> 
+        	<div class="form-group">
+            	<label for="feedback.like" class="col-md-1 col-form-label">Like</label>     
+            		<div class="col-md-1">
+                	{{ feedback.like(class="form-control", value=3)}}
+            		</div>
+        	</div> 
+        	<div class="form-group">
+               	<label for="feedback.agree" class="col-md-1 col-form-label">Agree</label>           
+            	<div class="col-md-1">
+                	{{ feedback.agree(class="form-control", value='5')}}
+            	</div>
+        	</div> 
+        	<div> 
+        		<label for="feedback.comment" class="col-md-1 col-form-label">Comment</label>           
+            	<div class="col-md-3">
+                	{{ feedback.comment(class="form-control", value='6')}}
+            	</div>
+        	</div> 
+        	<div class="form-group">
+        		<br />
+                <div class="col-md-1">
+                   {{ feedback.submit(class="btn btn-primary btn-block")}}
+                </div>   
+            </div>       
+       	</form>
+       {% endif %} 
+
+      </div>
+  </div>
+</div>
+</div>
 {% endblock %}
 
 

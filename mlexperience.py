@@ -16,6 +16,7 @@ from forms import AdminUserPW
 from forms import UserPW
 from forms import UserPref
 from forms import UserLeave
+from forms import Feedback 
 import config
 from functools import wraps
 from flask import current_app
@@ -197,7 +198,7 @@ def weather_service():
 @login_required
 def news_service():
     news = DB.read_news()
-    return render_template("news_model.html", news=news)      
+    return render_template("news_model.html", news=news, feedback=Feedback())      
     
 @app.route("/admin/web_log")
 @login_required
@@ -382,6 +383,25 @@ def weather():
          return redirect(url_for('dashboard'))
             
     return redirect(url_for('weather_service'))
+    
+@app.route('/user/feedback_submit', methods=['POST']) 
+@login_required
+@ssl_required
+def feedback_coming():
+    form = Feedback(request.form)
+    fed_back = {}
+    fed_back['model_id'] = form.model_id.data
+    fed_back['element_id'] = form.element_id.data
+    fed_back['comment'] = form.comment.data
+    fed_back['label'] = form.label.data
+    fed_back['like'] = form.like.data
+    fed_back['date'] = form.date.data
+    fed_back['agree'] = form.agree.data
+    fed_back['email'] = current_user.get_id()
+    DB.push_feed_back(fed_back)
+    return redirect(url_for('news_service'))
+ 
+   
 
 @app.route("/user/pw_submit", methods=["POST"])
 @login_required

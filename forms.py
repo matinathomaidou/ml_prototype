@@ -13,6 +13,9 @@ from wtforms.fields.html5 import EmailField
 from wtforms import validators
 from wtforms import BooleanField
 from wtforms import StringField
+from wtforms import HiddenField
+from wtforms import TextAreaField
+from wtforms import DateTimeField
 
 class RegistrationForm(Form):
     email = EmailField('email',validators=[validators.DataRequired(), validators.Email()])
@@ -60,3 +63,16 @@ class UserLeave(Form):
     bye1 = StringField(u'Leaving', [validators.optional(), validators.length(max=3)])
     bye2 = StringField(u'US', [validators.DataRequired(), validators.length(max=3)])
     submit = SubmitField('submit', [validators.DataRequired()]) 
+    
+class Feedback(Form):
+    model_id = HiddenField(u'Model', [validators.DataRequired(), validators.length(max=10)]) 
+    element_id =HiddenField(u'Item', [validators.DataRequired(), validators.length(max=10)]) 
+    comment = TextAreaField(u'Comment', [validators.optional(), validators.length(max=100)])
+    label = StringField(u'Label', [validators.optional(), validators.length(max=100)])
+    like = StringField(u'Like', [validators.optional()])
+    date = HiddenField(u'Date', [validators.DataRequired()])
+    agree = StringField(u'Comment', [validators.optional(), validators.length(max=100)])
+    submit = SubmitField('submit', [validators.DataRequired()]) 
+    
+    
+    
