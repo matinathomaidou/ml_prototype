@@ -83,6 +83,7 @@ class DBHelper:
             article['summary'] = art['summary']
             article['date'] = art['date']
             article['topic'] = art['topic']
+            article['id'] = art['ml_id']
             news.append(article)
         return news
         
