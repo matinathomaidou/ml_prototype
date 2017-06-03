@@ -82,6 +82,7 @@ class DBHelper:
             article['title'] = art['title']
             article['summary'] = art['summary']
             article['date'] = art['date']
+            article['topic'] = art['topic']
             news.append(article)
         return news
         
