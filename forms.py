@@ -68,10 +68,13 @@ class Feedback(Form):
     model_id = HiddenField(u'Model', [validators.DataRequired(), validators.length(max=10)]) 
     element_id =HiddenField(u'Item', [validators.DataRequired(), validators.length(max=10)]) 
     comment = TextAreaField(u'Comment', [validators.optional(), validators.length(max=100)])
-    label = StringField(u'Label', [validators.optional(), validators.length(max=100)])
-    like = StringField(u'Like', [validators.optional()])
+    label = HiddenField(u'Label', [validators.optional(), validators.length(max=100)])
+    like = HiddenField(u'Like', [validators.optional()])
     date = HiddenField(u'Date', [validators.DataRequired()])
-    agree = StringField(u'Comment', [validators.optional(), validators.length(max=100)])
+    agree = HiddenField(u'Comment', [validators.optional(), validators.length(max=100)])
+    foll_link = HiddenField(u'Date', [validators.DataRequired()])
+    no_show = HiddenField(u'Date', [validators.DataRequired()])
+    review = HiddenField(u'Date', [validators.DataRequired()])
     submit = SubmitField('submit', [validators.DataRequired()]) 
     
     

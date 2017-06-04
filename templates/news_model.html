@@ -34,16 +34,16 @@
     <h4 class='card-title'> {{article.title}} </h4>
     <h8 class='card-subtitle'> {{article.date}} </h8>
     <p class='card-text'> {{article.summary}} </p>
-    <a href='{{article.link}}' class="card-link" target="_blank"> {{article.link}}</a>
+    <a onclick="url();" href='{{article.link}}' class="card-link" target="_blank"> {{article.link}}</a>
     <p hidden class='article_id'> {{ article.id }} </p>
-    <hr />
-    <a href="#" class="btn btn-primary btn-sm">Like</a>
-    <a href="#" class="btn btn-primary btn-sm">Agree</a>
-    <a href="#" class="btn btn-primary btn-sm">Dis-Agree</a>
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" onclick="editArticleId(&#39;{{article.id}}&#39;); return false;" href="#">Feedback</button>
+    <br />
+    <a id='rel' onclick="relevant(); return false" href="#" class="btn btn-primary btn-sm">Relevant</a>
+    <a id='read' onclick="read(); return false" href="#" class="btn btn-primary btn-sm">Read it</a>
+    <a id='noshow' onclick="dont(); return false" href="#" class="btn btn-primary btn-sm">Don't show</a>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" onclick="editArticleId(&#39;{{article.id}}&#39;,&#39;{{article.topic}}&#39; ); return false;" href="#">Feedback</button>
     <hr />
     <div class='card-footer'>
-      <small class='text-muted'> {{article.topic}} </small> 
+      <small class='text-muted' id='topic'> {{article.topic}} </small> 
     </div>   
     <hr />
     </div>
@@ -69,28 +69,15 @@
       	<div class='container'>
       	<form id="tab1", class="form-horizontal" action="/user/feedback_submit" method="POST">
 			{{ feedback.csrf_token }}
-			{{ feedback.model_id(class="form-control", value=0)}}	
+			{{ feedback.model_id(class="form-control", value='Guardian News API')}}	
 			{{ feedback.element_id(class="form-control", value=1)}}
 			{{ feedback.date(class="form-control", value=4)}}
-
-            <div class="form-group">
-            	<label for="feedback.label" class="col-md-1 col-form-label">Category</label>   
-            		<div class="col-md-1">
-                	{{ feedback.label(class="form-control", value=2)}}
-            		</div>
-        	</div> 
-        	<div class="form-group">
-            	<label for="feedback.like" class="col-md-1 col-form-label">Like</label>     
-            		<div class="col-md-1">
-                	{{ feedback.like(class="form-control", value=3)}}
-            		</div>
-        	</div> 
-        	<div class="form-group">
-               	<label for="feedback.agree" class="col-md-1 col-form-label">Agree</label>           
-            	<div class="col-md-1">
-                	{{ feedback.agree(class="form-control", value='5')}}
-            	</div>
-        	</div> 
+			{{ feedback.foll_link(class="form-control", value="No")}}
+			{{ feedback.no_show(class="form-control", value=" ")}}
+			{{ feedback.review(class="form-control", value=" ")}}
+			{{ feedback.like(class="form-control", value=" ")}}
+			{{ feedback.agree(class="form-control", value=" ")}}
+			{{ feedback.label(class="form-control", value=" ")}}
         	<div> 
         		<label for="feedback.comment" class="col-md-1 col-form-label">Comment</label>           
             	<div class="col-md-3">
@@ -112,13 +99,25 @@
 </div>
 
 <script type=text/javascript>
-	function editArticleId(id){
-		console.log(id)
+	function editArticleId(id,label){
 		$('input#element_id').val(id);
 		var currentTime = new Date();
 		$('input#date').val(currentTime);
-
-	}
+		$('input#label').val(label)
+	};
+	function relevant(){
+		$('input#like').val('Yes');
+	};
+	function read() {
+		$('input#review').val('Yes');
+	};
+	function dont() {
+		$('input#no_show').val('Yes');
+	};
+	function url() {
+		$('input#follow_link').val('Yes');
+	};
+	
 
 </script>
 

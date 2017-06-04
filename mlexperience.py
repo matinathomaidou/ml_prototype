@@ -398,6 +398,9 @@ def feedback_coming():
     fed_back['date'] = form.date.data
     fed_back['agree'] = form.agree.data
     fed_back['email'] = current_user.get_id()
+    fed_back['foll_link'] = form.foll_link.data
+    fed_back['no_show'] = form.no_show.data
+    fed_back['review'] = form.review.data
     DB.push_feed_back(fed_back)
     return redirect(url_for('news_service'))
  
