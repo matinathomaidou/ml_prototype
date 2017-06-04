@@ -37,9 +37,9 @@
     <a onclick="url();" href='{{article.link}}' class="card-link" target="_blank"> {{article.link}}</a>
     <p hidden class='article_id'> {{ article.id }} </p>
     <br />
-    <a id='rel' onclick="relevant(); return false" href="#" class="btn btn-primary btn-sm">Relevant</a>
-    <a id='read' onclick="read(); return false" href="#" class="btn btn-primary btn-sm">Read it</a>
-    <a id='noshow' onclick="dont(); return false" href="#" class="btn btn-primary btn-sm">Don't show</a>
+    <button id='rel' onclick="relevant();" href="#" class="btn btn-primary btn-sm">Relevant</button>
+    <button id='read' onclick="read();" href="#" class="btn btn-primary btn-sm">Read it</button>
+    <button id='noshow' onclick="dont();" href="#" class="btn btn-primary btn-sm">Don't show</button>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" onclick="editArticleId(&#39;{{article.id}}&#39;,&#39;{{article.topic}}&#39; ); return false;" href="#">Feedback</button>
     <hr />
     <div class='card-footer'>
