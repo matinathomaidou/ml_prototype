@@ -57,7 +57,7 @@ with codecs.open('/var/log/apache2/access.log','rU','utf-8') as f:
            jline = unicodedata.normalize('NFKC',line)
            # regular expression to take care of it
            # and don't let them go to the error line
-           jline = re.sub(r'\x??', '', jline)
+           jline = re.sub(r'\\x??', '', jline)
            data.append(json.loads(jline))
        except:
            print(line)
