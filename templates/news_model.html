@@ -31,16 +31,20 @@
     <div class='card' >
     <div class='card-header'> Profile match </div>  
     <div class='card_block'> 
-    <h4 class='card-title'> {{article.title}}</h4>
-    <h8 class='card-subtitle'> {{article.date }}</h8>
-    <p class='card-text'> {{article.summary}}</p>
-    <a href='{{article.link}}' class="card-link" target="_blank"> {{article.link}}</a>
+    <h4 class='card-title'> {{article.title}} </h4>
+    <h8 class='card-subtitle'> {{article.date}} </h8>
+    <p class='card-text'> {{article.summary}} </p>
+    <a onclick="url();" href='{{article.link}}' class="card-link" target="_blank"> {{article.link}}</a>
+    <p hidden class='article_id'> {{ article.id }} </p>
+    <br />
+    <button id='rel' onclick="relevant();" href="#" class="btn btn-primary btn-sm">Relevant</button>
+    <button id='read' onclick="read();" href="#" class="btn btn-primary btn-sm">Read it</button>
+    <button id='noshow' onclick="dont();" href="#" class="btn btn-primary btn-sm">Don't show</button>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" onclick="editArticleId(&#39;{{article.id}}&#39;,&#39;{{article.topic}}&#39; ); return false;" href="#">Feedback</button>
     <hr />
-    <a href="#" class="btn btn-primary btn-sm">Like</a>
-    <a href="#" class="btn btn-primary btn-sm">Agree</a>
-    <a href="#" class="btn btn-primary btn-sm">Dis-Agree</a>
-    <hr />
-    <div class='card-footer text-muted'> Your view </div>  
+    <div class='card-footer'>
+      <small class='text-muted' id='topic'> {{article.topic}} </small> 
+    </div>   
     <hr />
     </div>
     </div>
@@ -50,7 +54,72 @@
 
 </div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Feedback</h4>
+     </div>
+      <div class="modal-body">
+      	{% if feedback %}
+      	<div class='container'>
+      	<form id="tab1", class="form-horizontal" action="/user/feedback_submit" method="POST">
+			{{ feedback.csrf_token }}
+			{{ feedback.model_id(class="form-control", value='Guardian News API')}}	
+			{{ feedback.element_id(class="form-control", value=1)}}
+			{{ feedback.date(class="form-control", value=4)}}
+			{{ feedback.foll_link(class="form-control", value="No")}}
+			{{ feedback.no_show(class="form-control", value=" ")}}
+			{{ feedback.review(class="form-control", value=" ")}}
+			{{ feedback.like(class="form-control", value=" ")}}
+			{{ feedback.agree(class="form-control", value=" ")}}
+			{{ feedback.label(class="form-control", value=" ")}}
+        	<div> 
+        		<label for="feedback.comment" class="col-md-1 col-form-label">Comment</label>           
+            	<div class="col-md-3">
+                	{{ feedback.comment(class="form-control")}}
+            	</div>
+        	</div> 
+        	<div class="form-group">
+        		<br />
+                <div class="col-md-1">
+                   {{ feedback.submit(class="btn btn-primary btn-block")}}
+                </div>   
+            </div>       
+       	</form>
+       {% endif %} 
+
+      </div>
+  </div>
+</div>
+</div>
+
+<script type=text/javascript>
+	function editArticleId(id,label){
+		$('input#element_id').val(id);
+		var currentTime = new Date();
+		$('input#date').val(currentTime);
+		$('input#label').val(label)
+	};
+	function relevant(){
+		$('input#like').val('Yes');
+	};
+	function read() {
+		$('input#review').val('Yes');
+	};
+	function dont() {
+		$('input#no_show').val('Yes');
+	};
+	function url() {
+		$('input#follow_link').val('Yes');
+	};
+	
+
+</script>
+
 {% endblock %}
-
-
 

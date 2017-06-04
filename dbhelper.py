@@ -82,6 +82,12 @@ class DBHelper:
             article['title'] = art['title']
             article['summary'] = art['summary']
             article['date'] = art['date']
+            article['topic'] = art['topic']
+            article['id'] = art['ml_id']
             news.append(article)
         return news
+        
+    def push_feed_back(self, fed_back):
+        self.db.feedback.insert({'Feedback': fed_back})
+        
 
