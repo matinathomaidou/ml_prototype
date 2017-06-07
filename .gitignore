@@ -6,3 +6,4 @@ config.py
 *.txt
 __pycache__
 
+jup*
