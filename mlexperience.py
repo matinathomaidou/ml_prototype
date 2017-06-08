@@ -41,7 +41,10 @@ sec_files = config.sec_files
 if config.test:
     from mockdbhelper import MockDBHelper as DBHelper
 else:
-    from dbhelper import DBHelper
+    if config.db == 'redis':    
+        from redis_db import DBHelper
+    else:
+        from dbhelper import DBHelper
     
 from user import User
 from passwordhelper import PasswordHelper
