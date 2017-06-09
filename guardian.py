@@ -28,6 +28,9 @@ db.news.remove()
 import config
 import requests
 
+import redis
+from redis_collections import Dict
+
 
 from datetime import date, timedelta
 import pymongo
@@ -132,8 +135,8 @@ my_params = {
 # day iteration from here:
 # http://stackoverflow.com/questions/7274267/print-all-day-dates-between-two-dates
 
-start_date = date.today() - timedelta(60)
-end_date = date.today() - timedelta(30)
+start_date = date.today() - timedelta(10)
+end_date = date.today() - timedelta(1)
 dayrange = range((end_date - start_date).days + 1)
 db.guardian.drop()
 db.news.drop()

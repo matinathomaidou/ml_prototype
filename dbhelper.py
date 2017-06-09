@@ -74,18 +74,6 @@ class DBHelper:
         self.db.users.delete_many({'email' : email})
         self.db.user_profiles.delete_many({'email' : email})
     
-    def read_news(self):
-        news = []
-        for art in self.db.news.find():
-            article = {}
-            article['link'] = art['link']
-            article['title'] = art['title']
-            article['summary'] = art['summary']
-            article['date'] = art['date']
-            article['topic'] = art['topic']
-            article['id'] = art['ml_id']
-            news.append(article)
-        return news
         
     def push_feed_back(self, fed_back):
         self.db.feedback.insert({'Feedback': fed_back})

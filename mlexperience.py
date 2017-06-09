@@ -23,6 +23,7 @@ from flask import current_app
 from weather import query_api
 
 
+
 def ssl_required(fn):
     @wraps(fn)
     def decorated_view(*args, **kwargs):
@@ -48,9 +49,11 @@ else:
     
 from user import User
 from passwordhelper import PasswordHelper
+from newsdbhelper import newsDBHelper
 
 DB = DBHelper()
 PH = PasswordHelper()
+model_db = newsDBHelper()
 
 data = []
 error = ''
@@ -200,7 +203,7 @@ def weather_service():
 @ssl_required
 @login_required
 def news_service():
-    news = DB.read_news()
+    news = model_db.read_news()
     return render_template("news_model.html", news=news, feedback=Feedback())      
     
 @app.route("/admin/web_log")
