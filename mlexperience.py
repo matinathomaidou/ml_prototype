@@ -17,11 +17,13 @@ from forms import UserPW
 from forms import UserPref
 from forms import UserLeave
 from forms import Feedback 
+from forms import ContactForm
 import config
 from functools import wraps
 from flask import current_app
 from weather import query_api
-
+from flask import flash
+from flask_mail import Message, Mail
 
 
 def ssl_required(fn):
@@ -133,6 +135,14 @@ app.secret_key = config.secret_key
 
 login_manager = LoginManager(app)
 
+app.config["MAIL_SERVER"] = config.mail['MAIL_SERVER']
+app.config["MAIL_PORT"] =  config.mail['MAIL_PORT']
+app.config["MAIL_USE_SSL"] = config.mail['MAIL_USE_SSL']
+app.config["MAIL_USERNAME"] = config.mail['MAIL_USERNAME']
+app.config["MAIL_PASSWORD"] = config.mail['MAIL_PASSWORD']
+mail = Mail()
+mail.init_app(app)
+
 @app.route("/")
 @ssl_required
 def home():
@@ -141,6 +151,30 @@ def home():
     else:
         return render_template("home.html", loginform=LoginForm(), registrationform=None)
 
+@ssl_required
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+  form = ContactForm()
+ 
+  if request.method == 'POST':
+    form = ContactForm(request.form)
+    if form.validate() == False:
+      flash('All fields are required.')
+      return render_template('contact.html', form=form)
+    else:
+      msg = Message(form.subject.data, sender=form.email.data, recipients=['admin@mlexperience.org'])
+      msg.body = """
+      From: %s <%s>
+      %s
+      """ % (form.name.data, form.email.data, form.message.data)
+      mail.send(msg)
+ 
+     
+      return 'Form posted.'
+ 
+  elif request.method == 'GET':
+    return render_template('contact.html', form=form)
+    
     
 @app.route("/login", methods=["POST"])
 @ssl_required

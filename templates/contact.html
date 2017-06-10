@@ -1,0 +1,49 @@
+
+{% if current_user.is_authenticated %}
+  {% extends "base.html" %}
+{% else %}
+  {% extends "home.html" %}
+{% endif %}    
+ 
+{% block content %}
+  <h2>Contact</h2>
+
+{% for message in form.name.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+ 
+{% for message in form.email.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+ 
+{% for message in form.subject.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+ 
+{% for message in form.message.errors %}
+  <div class="flash">{{ message }}</div>
+{% endfor %}
+
+  <form action="{{ url_for('contact') }}" method=post>
+    {{ form.csrf_token}}
+    {{ form.name.label }}
+    {{ form.name }}
+ 
+    {{ form.email.label }}
+    {{ form.email }}
+ 
+    {{ form.subject.label }}
+    {{ form.subject }}
+ 
+    {{ form.message.label }}
+    {{ form.message }}
+ 
+    {{ form.submit }}
+  </form>
+
+  <a class="" target='_blank' href="https://twitter.com/mlexperienceorg">Our Twitter Account @mlexperienceorg</a>
+  <a class="" target='_blank' href="https://fb.me/mlexperience.org">Our Facebook page</a>
+  <a class="" target='_blank' href="https://m.me/mlexperience.org">Message is on Facebook</a>
+  <a class="" target='_blank' href="https://mlexperienceblog.wordpress.com/">Our blog</a>
+
+{% endblock %}

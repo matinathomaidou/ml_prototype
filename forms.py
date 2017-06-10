@@ -10,12 +10,12 @@ from wtforms import Form
 from wtforms import PasswordField
 from wtforms import SubmitField
 from wtforms.fields.html5 import EmailField
-from wtforms import validators
+from wtforms import validators, ValidationError
 from wtforms import BooleanField
 from wtforms import StringField
 from wtforms import HiddenField
 from wtforms import TextAreaField
-from wtforms import DateTimeField
+from wtforms import TextField
 
 class RegistrationForm(Form):
     email = EmailField('email',validators=[validators.DataRequired(), validators.Email()])
@@ -76,6 +76,13 @@ class Feedback(Form):
     no_show = HiddenField(u'Date', [validators.DataRequired()])
     review = HiddenField(u'Date', [validators.DataRequired()])
     submit = SubmitField('submit', [validators.DataRequired()]) 
+    
+class ContactForm(Form):
+    name = TextField("Name",  [validators.DataRequired(),validators.length(max=10)])
+    email = TextField("Email",  [validators.DataRequired(),validators.Email()])
+    subject = TextField("Subject",  [validators.DataRequired(),validators.length(max=50)])
+    message = TextAreaField("Message",  [validators.DataRequired(),validators.length(max=1000)])
+    submit = SubmitField("Send", [validators.DataRequired()])
     
     
     
