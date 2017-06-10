@@ -177,13 +177,13 @@ def register():
     if form.validate():
         if DB.get_user(form.email.data):
             form.email.errors.append("Email address already registered")
-            return render_template('home.html', loginform=LoginForm, registrationform=form)
+            return render_template('home.html', loginform=LoginForm(), registrationform=form, onloadmessage="Please log in to continue.")
         salt = PH.get_salt()
         hashed = PH.get_hash((form.password2.data).encode() + salt)
         is_admin = 'N'
         DB.add_user(form.email.data, salt, hashed, is_admin)
-        return render_template("home.html", loginform=LoginForm(), registrationform=form, onloadmessage="Registration successful. Please log in to continue.  Thank you!.")
-    return render_template("home.html", loginform=LoginForm(), registrationform=form)
+        return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Registration successful. Please log in to continue.  Thank you!.")
+    return render_template("home.html", loginform=None, registrationform=form)
 
     
 @app.route("/dashboard")
@@ -407,7 +407,7 @@ def feedback_coming():
     fed_back['foll_link'] = form.foll_link.data
     fed_back['no_show'] = form.no_show.data
     fed_back['review'] = form.review.data
-    DB.push_feed_back(fed_back)
+    model_db.push_feed_back(fed_back)
     return redirect(url_for('news_service'))
  
    

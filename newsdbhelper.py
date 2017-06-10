@@ -30,5 +30,6 @@ class newsDBHelper:
             news.append(article)
         return news
 
-        
+    def push_feed_back(self, fed_back):
+        self.db.feedback.insert({'Feedback': fed_back})     
 

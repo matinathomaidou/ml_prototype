@@ -75,7 +75,8 @@ class DBHelper:
         self.db.user_profiles.delete_many({'email' : email})
     
         
-    def push_feed_back(self, fed_back):
-        self.db.feedback.insert({'Feedback': fed_back})
-        
+    #def push_feed_back(self, fed_back):
+    #    self.db.feedback.insert({'Feedback': fed_back})
+    #code removed - news service is a customer related experiment
+    #and not part of the core mlexperience.org platform    
 

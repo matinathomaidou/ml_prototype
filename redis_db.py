@@ -121,10 +121,12 @@ class DBHelper:
         self.db.hdel('mlprofileDict',email)
 
         
-    def push_feed_back(self, fed_back):
-        email = fed_back['email']
-        time = fed_back['date']
-        key = email + time
-        feedback[key] = fed_back
-        self.db.hmset('mlfeedbackDict',feedback)
-        
+    #def push_feed_back(self, fed_back):
+    #    email = fed_back['email']
+    #    time = fed_back['date']
+    #    key = email + time
+    #    feedback[key] = fed_back
+    #    self.db.hmset('mlfeedbackDict',feedback)
+    #code removed as a news service is distinct from the platform
+    #news service is a customer oriented test
+    #so moved to a unique customer class    
