@@ -3,47 +3,81 @@
   {% extends "base.html" %}
 {% else %}
   {% extends "home.html" %}
-{% endif %}    
+{% endif %}  
+
+{% block bodytag %}
+    <body {% if onloadmessage %} onload="alert('{{onloadmessage}}');" {% endif %}>
+{% endblock %}
+
  
 {% block content %}
-  <h2>Contact</h2>
+    <div class="jumbotron" style="height: 12rem;">
+      <div class="container">
+        <h2>mlexperience.org</h2>
+        <p>Talk to us</p>
+      </div>
+    </div>
 
-{% for message in form.name.errors %}
-  <div class="flash">{{ message }}</div>
-{% endfor %}
- 
-{% for message in form.email.errors %}
-  <div class="flash">{{ message }}</div>
-{% endfor %}
- 
-{% for message in form.subject.errors %}
-  <div class="flash">{{ message }}</div>
-{% endfor %}
- 
-{% for message in form.message.errors %}
-  <div class="flash">{{ message }}</div>
-{% endfor %}
 
-  <form action="{{ url_for('contact') }}" method=post>
-    {{ form.csrf_token}}
-    {{ form.name.label }}
-    {{ form.name }}
- 
-    {{ form.email.label }}
-    {{ form.email }}
- 
-    {{ form.subject.label }}
-    {{ form.subject }}
- 
-    {{ form.message.label }}
-    {{ form.message }}
- 
-    {{ form.submit }}
-  </form>
+   <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Social Media</h2>
+            <ol class="list-group">
+            <li class="list-group-item"> <i class="fa fa-twitter" style="font-size:24px"></i> <a target='_blank' href="https://twitter.com/mlexperienceorg">Our Twitter Account @mlexperienceorg</a> </li>
+            <li class="list-group-item"> <i class="fa fa-facebook-official" style="font-size:24px"></i> <a class="" target='_blank' href="https://fb.me/mlexperience.org">Our Facebook page</a></li>
+            <li class="list-group-item"> <i class="fa fa-facebook-square" style="font-size:24px"></i> <a class="" target='_blank' href="https://m.me/mlexperience.org">Message us on Facebook Messenger</a></li>
+            <li class="list-group-item"> <i class="fa fa-wordpress" style="font-size:24px"></i> <a class="" target='_blank' href="https://mlexperienceblog.wordpress.com/">Our blog</a></li>
+            <li class="list-group-item"> <i class="fa fa-github" style="font-size:24px"></i> <a class="" target='_blank' href="https://github.com/mooredvd/ml_prototype/issues">Report an issue</a></li>
+            </ol>
+        </div>
+        <div class="col-md-8">
+          {% if form %}
+           <i class='fa fa-envelope' style='font-size:24px'></i><h2>Email us!</h2>
+           <form class="form-horizontal" action="{{ url_for('contact') }}" method=post>
+            {{ form.csrf_token }}
+             <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.email.errors %}
+                  <ul class="errors">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.email(class="form-control", placeholder="Email Address" )}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.name.errors %}
+                  <ul class="errors">{% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.name(class="form-control", placeholder="Name" )}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.subject.errors %}
+                  <ul class="errors">{% for error in form.subject.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.subject(class="form-control", placeholder="Subject" )}}
+              </div>
+            </div> 
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.message.errors %}
+                  <ul class="errors">{% for error in form.message.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.message(class="form-control", placeholder="Message" )}}
+              </div>
+            </div> 
+                <div class="form-group">
+                    <div class="col-sm-9">
+                    {{ form.submit(class="btn btn-primary btn-block")}}
+                </div>
+            </div>
+           </form>
+        {% endif %}                     
+       </div>
+    </div>  
+  </div>  
 
-  <a class="" target='_blank' href="https://twitter.com/mlexperienceorg">Our Twitter Account @mlexperienceorg</a>
-  <a class="" target='_blank' href="https://fb.me/mlexperience.org">Our Facebook page</a>
-  <a class="" target='_blank' href="https://m.me/mlexperience.org">Message is on Facebook</a>
-  <a class="" target='_blank' href="https://mlexperienceblog.wordpress.com/">Our blog</a>
 
 {% endblock %}

@@ -170,7 +170,7 @@ def contact():
       mail.send(msg)
  
      
-      return 'Form posted.'
+      return render_template('contact.html', form=None, onloadmessage="Sent  Thank you!.")
  
   elif request.method == 'GET':
     return render_template('contact.html', form=form)
@@ -238,7 +238,7 @@ def weather_service():
 @login_required
 def news_service():
     news = model_db.read_news()
-    return render_template("news_model.html", news=news, feedback=Feedback())      
+    return render_template("news_model.html", news=news, feedback=Feedback(), rows = int(len(news)/3))      
     
 @app.route("/admin/web_log")
 @login_required
