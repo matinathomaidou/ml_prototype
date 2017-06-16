@@ -17,10 +17,13 @@ from forms import UserPW
 from forms import UserPref
 from forms import UserLeave
 from forms import Feedback 
+from forms import ContactForm
 import config
 from functools import wraps
 from flask import current_app
 from weather import query_api
+from flask import flash
+from flask_mail import Message, Mail
 
 
 def ssl_required(fn):
@@ -41,13 +44,18 @@ sec_files = config.sec_files
 if config.test:
     from mockdbhelper import MockDBHelper as DBHelper
 else:
-    from dbhelper import DBHelper
+    if config.db == 'redis':    
+        from redis_db import DBHelper
+    else:
+        from dbhelper import DBHelper
     
 from user import User
 from passwordhelper import PasswordHelper
+from newsdbhelper import newsDBHelper
 
 DB = DBHelper()
 PH = PasswordHelper()
+model_db = newsDBHelper()
 
 data = []
 error = ''
@@ -127,6 +135,14 @@ app.secret_key = config.secret_key
 
 login_manager = LoginManager(app)
 
+app.config["MAIL_SERVER"] = config.mail['MAIL_SERVER']
+app.config["MAIL_PORT"] =  config.mail['MAIL_PORT']
+app.config["MAIL_USE_SSL"] = config.mail['MAIL_USE_SSL']
+app.config["MAIL_USERNAME"] = config.mail['MAIL_USERNAME']
+app.config["MAIL_PASSWORD"] = config.mail['MAIL_PASSWORD']
+mail = Mail()
+mail.init_app(app)
+
 @app.route("/")
 @ssl_required
 def home():
@@ -135,6 +151,30 @@ def home():
     else:
         return render_template("home.html", loginform=LoginForm(), registrationform=None)
 
+@ssl_required
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+  form = ContactForm()
+ 
+  if request.method == 'POST':
+    form = ContactForm(request.form)
+    if form.validate() == False:
+      flash('All fields are required.')
+      return render_template('contact.html', form=form)
+    else:
+      msg = Message(form.subject.data, sender=form.email.data, recipients=['admin@mlexperience.org'])
+      msg.body = """
+      From: %s <%s>
+      %s
+      """ % (form.name.data, form.email.data, form.message.data)
+      mail.send(msg)
+ 
+     
+      return render_template('contact.html', form=None, onloadmessage="Sent  Thank you!.")
+ 
+  elif request.method == 'GET':
+    return render_template('contact.html', form=form)
+    
     
 @app.route("/login", methods=["POST"])
 @ssl_required
@@ -171,13 +211,13 @@ def register():
     if form.validate():
         if DB.get_user(form.email.data):
             form.email.errors.append("Email address already registered")
-            return render_template('home.html', loginform=LoginForm, registrationform=form)
+            return render_template('home.html', loginform=LoginForm(), registrationform=form, onloadmessage="Please log in to continue.")
         salt = PH.get_salt()
         hashed = PH.get_hash((form.password2.data).encode() + salt)
         is_admin = 'N'
         DB.add_user(form.email.data, salt, hashed, is_admin)
-        return render_template("home.html", loginform=LoginForm(), registrationform=form, onloadmessage="Registration successful. Please log in to continue.  Thank you!.")
-    return render_template("home.html", loginform=LoginForm(), registrationform=form)
+        return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Registration successful. Please log in to continue.  Thank you!.")
+    return render_template("home.html", loginform=None, registrationform=form)
 
     
 @app.route("/dashboard")
@@ -197,8 +237,8 @@ def weather_service():
 @ssl_required
 @login_required
 def news_service():
-    news = DB.read_news()
-    return render_template("news_model.html", news=news, feedback=Feedback())      
+    news = model_db.read_news()
+    return render_template("news_model.html", news=news, feedback=Feedback(), rows = int(len(news)/3))      
     
 @app.route("/admin/web_log")
 @login_required
@@ -401,7 +441,7 @@ def feedback_coming():
     fed_back['foll_link'] = form.foll_link.data
     fed_back['no_show'] = form.no_show.data
     fed_back['review'] = form.review.data
-    DB.push_feed_back(fed_back)
+    model_db.push_feed_back(fed_back)
     return redirect(url_for('news_service'))
  
    

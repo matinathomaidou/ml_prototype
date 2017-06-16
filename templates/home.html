@@ -15,9 +15,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Home</a>
+          <a class="navbar-brand" href="/">Home</a>
+          <a class="navbar-brand" href="/contact"> Contact us</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+        	{% if loginform %}
           <form class="navbar-form navbar-right" action="/login" method="POST">
             {% if loginform.errors %}
               <ul class="errors">
@@ -34,12 +36,15 @@
             </div>
             <div class="form-group">
               {{ loginform.loginpassword(class="form-control", placeholder="Password")}}
-            </div>
+            </div>				
             <div class="form-group">
               {{ loginform.submit(value="Sign in", class="btn btn-success")}}
             </div>
+            <div class="form-group">
+                <a target='_blank' href="#">Reset</a>
+            </div>    
           </form>
-
+           {% endif %}
         </div><!--/.navbar-collapse -->
       </div>
     </nav>

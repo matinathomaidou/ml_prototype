@@ -28,6 +28,9 @@ db.news.remove()
 import config
 import requests
 
+import redis
+from redis_collections import Dict
+
 
 from datetime import date, timedelta
 import pymongo
@@ -132,7 +135,7 @@ my_params = {
 # day iteration from here:
 # http://stackoverflow.com/questions/7274267/print-all-day-dates-between-two-dates
 
-start_date = date.today() - timedelta(2)
+start_date = date.today() - timedelta(10)
 end_date = date.today() - timedelta(1)
 dayrange = range((end_date - start_date).days + 1)
 db.guardian.drop()
@@ -160,7 +163,7 @@ for daycount in dayrange:
     db.guardian.insert_many(all_results)   
     
 for first_article in all_results:
-        words = tokenize(first_article['fields']['bodyText'])  
+        #words = tokenize(first_article['fields']['bodyText'])  
         rec = {}
         rec['ml_id'] = first_article['id']  #this needs to be a unique incremental number - perhaps MongoDb will help
         rec['link'] = first_article['fields']['shortUrl']
@@ -171,6 +174,7 @@ for first_article in all_results:
         rec['content_type'] = first_article['type']
         rec['publication'] = first_article['fields']['publication']
         rec['published_by'] = first_article['fields']['productionOffice']
+        rec['text'] = (first_article['fields']['bodyText']) 
         tags_list = []
         for tag in first_article['tags']:
             tagss = {}          
