@@ -25,6 +25,8 @@ from weather import query_api
 from flask import flash
 from flask_mail import Message, Mail
 from itsdangerous import URLSafeTimedSerializer
+from forms import Email
+from forms import UserPW_Ext
 
 
 def ssl_required(fn):
@@ -183,13 +185,13 @@ def contact():
 @ssl_required
 def login():
     form = LoginForm(request.form)
-    if form.validate():
-        stored_user = DB.get_user(form.loginemail.data)
-        if stored_user and PH.validate_password((form.loginpassword.data).encode(), stored_user['salt'], stored_user['hashed']):
+    stored_user = DB.get_user(form.loginemail.data)
+    if form.validate():   
+        if stored_user and PH.validate_password((form.loginpassword.data).encode(), stored_user['salt'], stored_user['hashed']) and stored_user['email_val']:
             user = User(form.loginemail.data)
             login_user(user, remember=True)
             return redirect(url_for('dashboard'))
-        form.loginemail.errors.append("Email or password invalid")
+        form.loginemail.errors.append("Email and/or password invalid! did you validate your email address?")
     if config.reg_open:
        return render_template("home.html", loginform=form, registrationform=RegistrationForm())
     else:
@@ -223,14 +225,14 @@ def register():
         token = urllink.dumps(form.email.data, salt='email-confirm-key') 
         confirm_url = url_for('confirm_email', token=token, _external=True)
         html = render_template('email/activate.html', confirm_url=confirm_url)
-        msg = Message(subject, sender=form.email.data, recipients=['admin@mlexperience.org'])
+        msg = Message(subject, sender='admin@mlexperience.org', recipients=[form.email.data])
         msg.body = """
         From: %s <%s>
         %s
-        """ % (form.name.data, form.email.data, html)
+        """ % ('admin', 'admin@mlexperience.org', html)
         mail.send(msg)
         
-        return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="We have sent you an email to confirm your email - please check!")
+        return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="We have sent you an email to confirm your email - please check! (also spam folder)")
     return render_template("home.html", loginform=None, registrationform=form)
 
 @ssl_required
@@ -239,11 +241,67 @@ def confirm_email(token):
     try:
         email = urllink.loads(token, salt="email-confirm-key", max_age=86400)
     except:
-        return redirect(url_for('/'))
+        return render_template("home.html", loginform=None, registrationform=RegistrationForm, onloadmessage="URL Link expired")
         
     DB.email_val(email, True)    
 
-    return redirect(url_for('/'))
+    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Please log in to continue.")
+    
+@ssl_required
+@app.route('/reset/<token>')
+def reset_password(token):
+    try:
+        email = urllink.loads(token, salt="email-confirm-key", max_age=86400)
+    except:
+        email = email
+        return render_template("home.html", loginform=LoginForm, registrationform=None, onloadmessage="URL Link expired")
+    
+    return render_template("password_reset.html", loginform=None, registrationform=UserPW_Ext(), coll = True, token=token)   
+    
+@app.route('/user/reset_request', methods=["GET"])
+def reset():
+    if request.method == 'GET':
+        return render_template("password_reset_request.html", loginform=None, registrationform=Email(), coll = False)         
+
+
+@app.route('/user/reset_submit', methods=["POST"])
+def reset_handle():
+    form = Email(request.form) 
+    if form.validate():
+            subject = "Password reset requested"
+            token = urllink.dumps(form.email.data, salt='email-confirm-key') 
+            confirm_url = url_for('reset_password', token=token, _external=True)
+            html = render_template('email/reset.html', confirm_url=confirm_url)
+            msg = Message(subject, sender='admin@mlexperience.org', recipients=[form.email.data])
+            msg.body = """
+            From: %s <%s>
+            %s
+            """ % ('admin', 'admin@mlexperience.org', html)
+            mail.send(msg)
+            return render_template("home.html", loginform=None, registrationform=None, onloadmessage="We have sent you an email to reset your password - please check! (also spam folder)")
+     
+    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Please log in to continue.")
+
+@app.route('/user/reset_secure/<token>', methods=['POST'])
+def resetter(token):
+    form = UserPW_Ext(request.form)
+    email = urllink.loads(token, salt="email-confirm-key", max_age=86400)
+    if form.validate():
+            if DB.get_user(email):
+                salt = PH.get_salt()
+                hashed = PH.get_hash((form.password2.data).encode() + salt)
+                isadmin = 'N'
+                DB.pw_user_update(email, salt, hashed, isadmin)
+                return redirect(url_for('home'))
+            else:
+                return render_template("password_reset.html", loginform=None, registrationform=form)    
+    else:
+                form.password.errors.append("Fix errors and re-submit!")
+                return render_template("password_reset.html", loginform=None, registrationform=form, coll=True, token=token) 
+     
+    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Please log in to continue.")
+    
+    
     
 @app.route("/dashboard")
 @ssl_required

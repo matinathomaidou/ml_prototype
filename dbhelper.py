@@ -38,6 +38,7 @@ class DBHelper:
         
     def del_user(self, email):
         self.db.users.remove({"email": email})
+        self.db.user_profiles.delete_many({'email' : email})
 
     def toggle_admin(self, email):
        val = 'N'
