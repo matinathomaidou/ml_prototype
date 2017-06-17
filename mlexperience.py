@@ -24,6 +24,7 @@ from flask import current_app
 from weather import query_api
 from flask import flash
 from flask_mail import Message, Mail
+from itsdangerous import URLSafeTimedSerializer
 
 
 def ssl_required(fn):
@@ -71,6 +72,7 @@ def is_admin():
      except:
         return False
     
+
  
 class SecuredStaticFlask(Flask):
     def send_static_file(self, filename):
@@ -132,6 +134,7 @@ class SecuredStaticFlask(Flask):
        
 app = SecuredStaticFlask(__name__)
 app.secret_key = config.secret_key
+urllink = URLSafeTimedSerializer(app.secret_key)
 
 login_manager = LoginManager(app)
 
@@ -216,9 +219,31 @@ def register():
         hashed = PH.get_hash((form.password2.data).encode() + salt)
         is_admin = 'N'
         DB.add_user(form.email.data, salt, hashed, is_admin)
-        return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Registration successful. Please log in to continue.  Thank you!.")
+        subject = 'Confirm your email address'
+        token = urllink.dumps(form.email.data, salt='email-confirm-key') 
+        confirm_url = url_for('confirm_email', token=token, _external=True)
+        html = render_template('email/activate.html', confirm_url=confirm_url)
+        msg = Message(subject, sender=form.email.data, recipients=['admin@mlexperience.org'])
+        msg.body = """
+        From: %s <%s>
+        %s
+        """ % (form.name.data, form.email.data, html)
+        mail.send(msg)
+        
+        return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="We have sent you an email to confirm your email - please check!")
     return render_template("home.html", loginform=None, registrationform=form)
 
+@ssl_required
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = urllink.loads(token, salt="email-confirm-key", max_age=86400)
+    except:
+        return redirect(url_for('/'))
+        
+    DB.email_val(email, True)    
+
+    return redirect(url_for('/'))
     
 @app.route("/dashboard")
 @ssl_required

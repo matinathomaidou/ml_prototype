@@ -21,14 +21,14 @@ class DBHelper:
             
 
     def add_user(self, email, salt, hashed, is_admin):
-        self.db.users.insert({"email": email, "salt": salt, "hashed": hashed, "admin": is_admin})
+        self.db.users.insert({"email": email, "salt": salt, "hashed": hashed, "admin": is_admin, "email_val": False})
         profile = {}
         profile['name'] = ' '
         profile['city'] = ' '
         profile['news'] = ' '
         profile['currency'] = ' '
         profile['share'] = ' '
-        self.db.user_profiles.insert({'email': email, 'profile' : profile})
+        self.db.user_profiles.insert_one({'email': email, 'profile' : profile})
         
     def list_user(self):
         users = []
@@ -43,11 +43,14 @@ class DBHelper:
        val = 'N'
        if self.db.users.find_one({"email": email})['admin'] == 'N':
            val = 'Y'
-       self.db.users.update({"email": email}, {"$set": {"admin": val}})
+       self.db.users.update_one({"email": email}, {"$set": {"admin": val}})
         
 
     def pw_user_update(self, email, salt, hashed, is_admin):
         self.db.users.update({"email": email}, {"$set": {"salt": salt, "hashed":hashed}})
+        
+    def email_val(self, email, val):
+        self.db.users.update_one({"email": email}, {"$set": {"email_val": val}})    
       
 
     def user_profile_read(self, email):
