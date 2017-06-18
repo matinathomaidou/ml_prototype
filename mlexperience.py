@@ -43,6 +43,7 @@ def ssl_required(fn):
     return decorated_view
 
 sec_files = config.sec_files
+ssl_key = config.ssl_cert['home'] + '/' + config.ssl_cert['production']
 
 if config.test:
     from mockdbhelper import MockDBHelper as DBHelper
@@ -145,6 +146,8 @@ app.config["MAIL_PORT"] =  config.mail['MAIL_PORT']
 app.config["MAIL_USE_SSL"] = config.mail['MAIL_USE_SSL']
 app.config["MAIL_USERNAME"] = config.mail['MAIL_USERNAME']
 app.config["MAIL_PASSWORD"] = config.mail['MAIL_PASSWORD']
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 mail = Mail()
 mail.init_app(app)
 
@@ -228,7 +231,7 @@ def register():
         msg.body = """
         From: %s <%s>
         """ % ('admin', 'admin@mlexperience.org')
-        msg.html = render_template('email/activate.html', confirm_url=confirm_url)        
+        msg.html = render_template('email/activate.html', confirm_url=confirm_url)  
         mail.send(msg)
         
         return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="We have sent you an email to confirm your email - please check! (also spam folder)")
