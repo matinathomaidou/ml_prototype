@@ -25,6 +25,7 @@
         <th class='text-center'>Is Admin ?</th>
         <th class='text-center'>Update Admin</th>
         <th class='text-center'>Delete User</th>
+        <th class='text-center'>Active User</th>
       </tr>
     </thead>
     <tbody>
@@ -38,6 +39,11 @@
           <td class="text-center">
             <a class="btn btn-danger btn-xs" href={{ url_for('users_delete_admin', id=user.email) }}> Delete</a>
           </td>
+          {% if user.email_val %}
+          <td class="text-center">{{ user.email_val }}</td>
+          {% else %}
+          <td class="text-center">False</td>
+          {% endif %}
         </tr>
       {% endfor %}
     </tbody>

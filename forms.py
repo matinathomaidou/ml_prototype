@@ -84,5 +84,13 @@ class ContactForm(Form):
     message = TextAreaField("Message",  [validators.DataRequired(),validators.length(max=1000)])
     submit = SubmitField("Send", [validators.DataRequired()])
     
+class Email(Form):
+    email = EmailField('email',validators=[validators.DataRequired(), validators.Email()])   
+    submit = SubmitField("Send", [validators.DataRequired()])
+    
+class UserPW_Ext(Form):
+    password = PasswordField('password',validators=[validators.DataRequired(),validators.Length(min=8, message="Please choose a password of at least 8 characters")])
+    password2 = PasswordField('password2',validators=[validators.DataRequired(), validators.EqualTo('password', message='Passwords mustmatch')])
+    submit = SubmitField('submit', [validators.DataRequired()])    
     
     
