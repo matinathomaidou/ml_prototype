@@ -1,13 +1,28 @@
-{# mlexperience/templates/email/activate.html #}
+{% extends "base.html" %}
 
-Your account was successfully created. Please click the link below<br>
-to confirm your email address and activate your account:
+{% block navbar %}
 
-<p>
-<a href="{{ confirm_url }}">{{ confirm_url }}</a>
-</p>
+{% endblock %}
 
-<p>
---<br>
-Questions? Comments? Email admin@mlexperience.org
-</p>
+{% block content %}
+    <div class="jumbotron">
+      <div class="container">
+        <h1>mlexperience.org</h1>
+        <p>An Online community for machine learning experiments</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+		<p>Your account was successfully created. Please click the link below<br>
+			to confirm your email address and activate your account:</p>
+	   </div>
+	   <div class='row'>
+			<p> <a href="{{ confirm_url }}">{{ confirm_url }}</a> </p>
+	   </div>	
+	   <div class='row'>
+	   	<p> Questions? Comments? Email admin@mlexperience.org</p>	
+	   </div>		
+	</div>
+
+{% endblock %}

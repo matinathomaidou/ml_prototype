@@ -224,12 +224,11 @@ def register():
         subject = 'Confirm your email address'
         token = urllink.dumps(form.email.data, salt='email-confirm-key') 
         confirm_url = url_for('confirm_email', token=token, _external=True)
-        html = render_template('email/activate.html', confirm_url=confirm_url)
         msg = Message(subject, sender='admin@mlexperience.org', recipients=[form.email.data])
         msg.body = """
         From: %s <%s>
-        %s
-        """ % ('admin', 'admin@mlexperience.org', html)
+        """ % ('admin', 'admin@mlexperience.org')
+        msg.html = render_template('email/activate.html', confirm_url=confirm_url)        
         mail.send(msg)
         
         return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="We have sent you an email to confirm your email - please check! (also spam folder)")
@@ -267,26 +266,33 @@ def reset():
 @app.route('/user/reset_submit', methods=["POST"])
 def reset_handle():
     form = Email(request.form) 
-    if form.validate():
+    try:
+        stored_user = DB.get_user(form.email.data)
+        val_email = stored_user['email_val']
+    except:
+        stored_user = False
+        val_email = False
+        
+    if form.validate() and stored_user and val_email:
             subject = "Password reset requested"
             token = urllink.dumps(form.email.data, salt='email-confirm-key') 
             confirm_url = url_for('reset_password', token=token, _external=True)
-            html = render_template('email/reset.html', confirm_url=confirm_url)
             msg = Message(subject, sender='admin@mlexperience.org', recipients=[form.email.data])
             msg.body = """
             From: %s <%s>
-            %s
-            """ % ('admin', 'admin@mlexperience.org', html)
+            """ % ('admin', 'admin@mlexperience.org')
+            msg.html = render_template('email/reset.html', confirm_url=confirm_url)
             mail.send(msg)
             return render_template("home.html", loginform=None, registrationform=None, onloadmessage="We have sent you an email to reset your password - please check! (also spam folder)")
      
-    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Please log in to continue.")
+    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Only activated users can reset their passwords!")
 
 @app.route('/user/reset_secure/<token>', methods=['POST'])
 def resetter(token):
     form = UserPW_Ext(request.form)
     email = urllink.loads(token, salt="email-confirm-key", max_age=86400)
-    if form.validate():
+    stored_user = DB.get_user(email)
+    if form.validate() and stored_user:
             if DB.get_user(email):
                 salt = PH.get_salt()
                 hashed = PH.get_hash((form.password2.data).encode() + salt)
@@ -299,7 +305,7 @@ def resetter(token):
                 form.password.errors.append("Fix errors and re-submit!")
                 return render_template("password_reset.html", loginform=None, registrationform=form, coll=True, token=token) 
      
-    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Please log in to continue.")
+    return render_template("home.html", loginform=LoginForm(), registrationform=None, onloadmessage="Error! email not valid")
     
     
     
