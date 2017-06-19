@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+      <div class="container">
+        <h1>mlexperience.org</h1>
+        <p>An Online community for machine learning experiments</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+			<p> You requested an password reset by email. Please click the link below<br>
+				to confirm your request and reset your password:</p>
+	   </div>
+	   <div class='row'>
+			<p> <a href="{{ confirm_url }}">{{ confirm_url }}</a> </p>
+	   </div>	
+	   <div class='row'>
+	   	<p> Questions? Comments? Email admin@mlexperience.org</p>	
+	   </div>		
+	</div>
+
+{% endblock %}

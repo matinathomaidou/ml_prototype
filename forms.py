@@ -10,12 +10,12 @@ from wtforms import Form
 from wtforms import PasswordField
 from wtforms import SubmitField
 from wtforms.fields.html5 import EmailField
-from wtforms import validators
+from wtforms import validators, ValidationError
 from wtforms import BooleanField
 from wtforms import StringField
 from wtforms import HiddenField
 from wtforms import TextAreaField
-from wtforms import DateTimeField
+from wtforms import TextField
 
 class RegistrationForm(Form):
     email = EmailField('email',validators=[validators.DataRequired(), validators.Email()])
@@ -68,11 +68,29 @@ class Feedback(Form):
     model_id = HiddenField(u'Model', [validators.DataRequired(), validators.length(max=10)]) 
     element_id =HiddenField(u'Item', [validators.DataRequired(), validators.length(max=10)]) 
     comment = TextAreaField(u'Comment', [validators.optional(), validators.length(max=100)])
-    label = StringField(u'Label', [validators.optional(), validators.length(max=100)])
-    like = StringField(u'Like', [validators.optional()])
+    label = HiddenField(u'Label', [validators.optional(), validators.length(max=100)])
+    like = HiddenField(u'Like', [validators.optional()])
     date = HiddenField(u'Date', [validators.DataRequired()])
-    agree = StringField(u'Comment', [validators.optional(), validators.length(max=100)])
+    agree = HiddenField(u'Comment', [validators.optional(), validators.length(max=100)])
+    foll_link = HiddenField(u'Date', [validators.DataRequired()])
+    no_show = HiddenField(u'Date', [validators.DataRequired()])
+    review = HiddenField(u'Date', [validators.DataRequired()])
     submit = SubmitField('submit', [validators.DataRequired()]) 
     
+class ContactForm(Form):
+    name = TextField("Name",  [validators.DataRequired(),validators.length(max=10)])
+    email = TextField("Email",  [validators.DataRequired(),validators.Email()])
+    subject = TextField("Subject",  [validators.DataRequired(),validators.length(max=50)])
+    message = TextAreaField("Message",  [validators.DataRequired(),validators.length(max=1000)])
+    submit = SubmitField("Send", [validators.DataRequired()])
+    
+class Email(Form):
+    email = EmailField('email',validators=[validators.DataRequired(), validators.Email()])   
+    submit = SubmitField("Send", [validators.DataRequired()])
+    
+class UserPW_Ext(Form):
+    password = PasswordField('password',validators=[validators.DataRequired(),validators.Length(min=8, message="Please choose a password of at least 8 characters")])
+    password2 = PasswordField('password2',validators=[validators.DataRequired(), validators.EqualTo('password', message='Passwords mustmatch')])
+    submit = SubmitField('submit', [validators.DataRequired()])    
     
     

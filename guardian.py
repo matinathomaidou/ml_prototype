@@ -28,6 +28,9 @@ db.news.remove()
 import config
 import requests
 
+import redis
+from redis_collections import Dict
+
 
 from datetime import date, timedelta
 import pymongo
@@ -124,6 +127,7 @@ my_params = {
     'order-by': "newest",
     'show-fields': 'all',
     'page-size': 200,
+    'show-tags': 'all',
     'api-key': MY_API_KEY
 }
 
@@ -131,7 +135,7 @@ my_params = {
 # day iteration from here:
 # http://stackoverflow.com/questions/7274267/print-all-day-dates-between-two-dates
 
-start_date = date.today() - timedelta(1)
+start_date = date.today() - timedelta(10)
 end_date = date.today() - timedelta(1)
 dayrange = range((end_date - start_date).days + 1)
 db.guardian.drop()
@@ -159,16 +163,31 @@ for daycount in dayrange:
     db.guardian.insert_many(all_results)   
     
 for first_article in all_results:
-        words = tokenize(first_article['fields']['bodyText'])  
+        #words = tokenize(first_article['fields']['bodyText'])  
         rec = {}
         rec['ml_id'] = first_article['id']  #this needs to be a unique incremental number - perhaps MongoDb will help
         rec['link'] = first_article['fields']['shortUrl']
         rec['title'] = first_article['fields']['headline']
         rec['summary'] = first_article['fields']['trailText']
         rec['date'] = first_article['webPublicationDate']
-        rec['topic'] = '/' + first_article['sectionName'] + '/' + first_article['type'] + '/' + first_article['fields']['publication'] + '/' + first_article['fields']['productionOffice']
+        rec['topic'] = '/' + first_article['sectionName']
+        rec['content_type'] = first_article['type']
+        rec['publication'] = first_article['fields']['publication']
+        rec['published_by'] = first_article['fields']['productionOffice']
+        rec['text'] = (first_article['fields']['bodyText']) 
+        tags_list = []
+        for tag in first_article['tags']:
+            tagss = {}          
+            tagss['id'] = tag['id']
+            tagss['Url'] = tag['webUrl']
+            tagss['type'] = tag['type']
+            if tagss['type'] in ['keyword','contributor']:
+                tags_list.append(tagss)            
+            
+        rec['tags'] = tags_list
         rec['simlist'] = '' #this needs to be a list of similar documents based on tfidf vector and similarity (GENSIM)
-        db.news.insert_one(rec)
+        if(rec['content_type'] == 'article'):
+            db.news.insert_one(rec)
 
 
 

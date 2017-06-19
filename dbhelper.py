@@ -21,14 +21,14 @@ class DBHelper:
             
 
     def add_user(self, email, salt, hashed, is_admin):
-        self.db.users.insert({"email": email, "salt": salt, "hashed": hashed, "admin": is_admin})
+        self.db.users.insert({"email": email, "salt": salt, "hashed": hashed, "admin": is_admin, "email_val": False})
         profile = {}
         profile['name'] = ' '
         profile['city'] = ' '
         profile['news'] = ' '
         profile['currency'] = ' '
         profile['share'] = ' '
-        self.db.user_profiles.insert({'email': email, 'profile' : profile})
+        self.db.user_profiles.insert_one({'email': email, 'profile' : profile})
         
     def list_user(self):
         users = []
@@ -38,16 +38,20 @@ class DBHelper:
         
     def del_user(self, email):
         self.db.users.remove({"email": email})
+        self.db.user_profiles.delete_many({'email' : email})
 
     def toggle_admin(self, email):
        val = 'N'
        if self.db.users.find_one({"email": email})['admin'] == 'N':
            val = 'Y'
-       self.db.users.update({"email": email}, {"$set": {"admin": val}})
+       self.db.users.update_one({"email": email}, {"$set": {"admin": val}})
         
 
     def pw_user_update(self, email, salt, hashed, is_admin):
         self.db.users.update({"email": email}, {"$set": {"salt": salt, "hashed":hashed}})
+        
+    def email_val(self, email, val):
+        self.db.users.update_one({"email": email}, {"$set": {"email_val": val}})    
       
 
     def user_profile_read(self, email):
@@ -74,19 +78,9 @@ class DBHelper:
         self.db.users.delete_many({'email' : email})
         self.db.user_profiles.delete_many({'email' : email})
     
-    def read_news(self):
-        news = []
-        for art in self.db.news.find():
-            article = {}
-            article['link'] = art['link']
-            article['title'] = art['title']
-            article['summary'] = art['summary']
-            article['date'] = art['date']
-            article['topic'] = art['topic']
-            news.append(article)
-        return news
         
-    def push_feed_back(self, fed_back):
-        self.db.feedback.insert({'Feedback': fed_back})
-        
+    #def push_feed_back(self, fed_back):
+    #    self.db.feedback.insert({'Feedback': fed_back})
+    #code removed - news service is a customer related experiment
+    #and not part of the core mlexperience.org platform    
 

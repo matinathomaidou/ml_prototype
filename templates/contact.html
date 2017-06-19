@@ -1,0 +1,82 @@
+
+{% if current_user.is_authenticated %}
+  {% extends "base.html" %}
+{% else %}
+  {% extends "home.html" %}
+{% endif %}  
+
+{% block bodytag %}
+    <body {% if onloadmessage %} onload="alert('{{onloadmessage}}');" {% endif %}>
+{% endblock %}
+
+ 
+{% block content %}
+    <div class="jumbotron" style="height: 12rem;">
+      <div class="container">
+        <h2>Talk to us @ mlexperience.org</h2>
+      </div>
+    </div>
+
+
+   <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Social Media</h2>
+            <ol class="list-group">
+            <li class="list-group-item"> <i class="fa fa-twitter" style="font-size:24px"></i> <a target='_blank' href="https://twitter.com/mlexperienceorg">Our Twitter Account @mlexperienceorg</a> </li>
+            <li class="list-group-item"> <i class="fa fa-facebook-official" style="font-size:24px"></i> <a class="" target='_blank' href="https://fb.me/mlexperience.org">Our Facebook page</a></li>
+            <li class="list-group-item"> <i class="fa fa-facebook-square" style="font-size:24px"></i> <a class="" target='_blank' href="https://m.me/mlexperience.org">Message us on Facebook Messenger</a></li>
+            <li class="list-group-item"> <i class="fa fa-wordpress" style="font-size:24px"></i> <a class="" target='_blank' href="https://mlexperienceblog.wordpress.com/">Our blog</a></li>
+            <li class="list-group-item"> <i class="fa fa-github" style="font-size:24px"></i> <a class="" target='_blank' href="https://github.com/mooredvd/ml_prototype/issues">Report an issue</a></li>
+            </ol>
+        </div>
+        <div class="col-md-8">
+          {% if form %}
+           <i class='fa fa-envelope' style='font-size:24px'></i><h2>Email us!</h2>
+           <form class="form-horizontal" action="{{ url_for('contact') }}" method=post>
+            {{ form.csrf_token }}
+             <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.email.errors %}
+                  <ul class="errors">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.email(class="form-control", placeholder="Email Address" )}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.name.errors %}
+                  <ul class="errors">{% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.name(class="form-control", placeholder="Name" )}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.subject.errors %}
+                  <ul class="errors">{% for error in form.subject.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.subject(class="form-control", placeholder="Subject" )}}
+              </div>
+            </div> 
+            <div class="form-group">
+              <div class="col-sm-9">
+                {% if form.message.errors %}
+                  <ul class="errors">{% for error in form.message.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+                {{ form.message(class="form-control", placeholder="Message" )}}
+              </div>
+            </div> 
+                <div class="form-group">
+                    <div class="col-sm-9">
+                    {{ form.submit(class="btn btn-primary btn-block")}}
+                </div>
+            </div>
+           </form>
+        {% endif %}                     
+       </div>
+    </div>  
+  </div>  
+
+
+{% endblock %}
